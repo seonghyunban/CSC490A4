@@ -1,0 +1,134 @@
+\section{GRPO and Reinforcement Learning Review}
+
+The reinforcement learning stage in \texttt{nanochat} is based on Group Relative Policy Optimization (GRPO), originally introduced in DeepSeekMath \cite{shao2024deepseekmath}. GRPO is derived from Proximal Policy Optimization (PPO) and removes the critic model by estimating the advantage using relative rewards from multiple sampled outputs.
+
+Following the notation of \cite{shao2024deepseekmath}, let $q$ denote a question sampled from a dataset distribution $P(Q)$ and let $\pi_\theta(o|q)$ be the policy model generating an output sequence $o=(o_1,\dots,o_{|o|})$. PPO optimizes the surrogate objective
+
+\begin{align}
+J_{\mathrm{PPO}}(\theta) =
+\mathbb{E}_{q \sim P(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}}
+\Bigg[
+\frac{1}{|o|}
+\sum_{t=1}^{|o|}
+\min
+\Big(
+&\frac{\pi_\theta(o_t|q,o_{<t})}
+     {\pi_{\theta_{\mathrm{old}}}(o_t|q,o_{<t})} A_t, \\
+&\mathrm{clip}\!\left(
+\frac{\pi_\theta(o_t|q,o_{<t})}
+     {\pi_{\theta_{\mathrm{old}}}(o_t|q,o_{<t})},
+1-\epsilon,1+\epsilon
+\right) A_t
+\Big)
+\Bigg],
+\end{align}
+
+where $\pi_{\theta_{\mathrm{old}}}$ is the previous policy, $\epsilon$ is the clipping parameter, and $A_t$ is the advantage computed using a value function. In reinforcement learning for language models, a KL penalty to a reference model $\pi_{\mathrm{ref}}$ is typically added to the reward
+
+\begin{equation}
+r_t =
+r_\phi(q,o_{\le t})
+-
+\beta
+\log
+\frac{\pi_\theta(o_t|q,o_{<t})}
+{\pi_{\mathrm{ref}}(o_t|q,o_{<t})}.
+\end{equation}
+
+GRPO removes the value model and instead estimates the advantage using a group of sampled outputs. For each question $q$, a set of outputs $\{o_1,\dots,o_G\}$ is sampled from $\pi_{\theta_{\mathrm{old}}}$. The policy is then optimized by
+
+\begin{align}
+J_{\mathrm{GRPO}}(\theta) =
+\mathbb{E}_{q,\{o_i\}}
+\Bigg[
+\frac{1}{G}
+\sum_{i=1}^{G}
+\frac{1}{|o_i|}
+\sum_{t=1}^{|o_i|}
+\Bigg(
+\min
+\Big(
+&\frac{\pi_\theta(o_{i,t}|q,o_{i,<t})}
+     {\pi_{\theta_{\mathrm{old}}}(o_{i,t}|q,o_{i,<t})}
+     \hat A_{i,t}, \\
+&\mathrm{clip}\!\left(
+\frac{\pi_\theta(o_{i,t}|q,o_{i,<t})}
+     {\pi_{\theta_{\mathrm{old}}}(o_{i,t}|q,o_{i,<t})},
+1-\epsilon,1+\epsilon
+\right)
+\hat A_{i,t}
+\Big)
+-
+\beta D_{KL}(\pi_\theta||\pi_{\mathrm{ref}})
+\Bigg)
+\Bigg].
+\end{align}
+
+In outcome-supervision GRPO, the advantage is computed from the normalized rewards of the sampled outputs
+
+\begin{equation}
+\hat A_{i,t}
+=
+\tilde r_i
+=
+\frac{r_i - \mathrm{mean}(r)}{\mathrm{std}(r)},
+\end{equation}
+
+so that all tokens in the sequence $o_i$ share the same advantage value.
+
+The reinforcement learning implementation in \texttt{nanochat} simplifies this formulation substantially. The code explicitly removes several GRPO components:
+
+\begin{itemize}
+\item Delete trust region, so there is no KL regularization to a reference model.
+\item PPO ratio+clip are omitted because training is performed on-policy.
+\item Advantage normalization is simplified from the GRPO z-score normalization to mean subtraction only.
+\end{itemize}
+
+In the code (\texttt{chat\_rl.py}), the advantage is computed as
+
+\begin{equation}
+A_i = r_i - \mu, \quad
+\mu = \frac{1}{G}\sum_{j=1}^{G} r_j,
+\end{equation}
+
+and the policy gradient objective becomes
+
+\begin{equation}
+J(\theta)
+=
+\mathbb{E}
+\left[
+A_i
+\sum_{t}
+\log \pi_\theta(o_{i,t}|q,o_{i,<t})
+\right].
+\end{equation}
+
+This corresponds to the implementation
+
+\begin{verbatim}
+mu = rewards.mean()
+advantages = rewards - mu
+...
+pg_obj = (logp * advantages.unsqueeze(-1)).sum()
+...
+loss = -pg_obj
+\end{verbatim}
+
+in the \texttt{nanochat} reinforcement learning script chat\_rl.py \cite{karpathy2025nanochat}. 
+
+Therefore, while GRPO in DeepSeekMath retains the PPO-style ratio, clipping, and KL regularization, the \texttt{nanochat} implementation reduces the algorithm to a much simpler REINFORCE-style policy gradient with group-relative rewards. The reason why he may have made these changes is probably that these simplifications reduce memory and implementation complexity and make the RL stage practical on modest hardware, which aligns with the design goal of \texttt{nanochat} as a minimal and educational LLM training pipeline.
+
+\begin{thebibliography}{9}
+
+\bibitem{shao2024deepseekmath}
+Shao, Ziyi and others. 
+"DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models." 
+\textit{arXiv preprint arXiv:2402.03300}, 2024.
+
+\bibitem{karpathy2025nanochat}
+Karpathy, Andrej. 
+"nanochat: The best ChatGPT that \$100 can buy." 
+2025. \url{https://github.com/karpathy/nanochat}
+
+\end{thebibliography}
