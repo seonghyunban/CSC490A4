@@ -1,0 +1,92 @@
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{parskip}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{forest}
+\usepackage{fancyhdr}
+
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\graphicspath{{./component/figures/}}
+
+
+% Page geometry
+\geometry{margin=1in}
+
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% Title formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\setcounter{tocdepth}{2}
+
+% Document info
+\title{CSC490 Assignment A3 - Pre-training Nanochat}
+\author{
+    Chris Jiang (Student ID: 1008109574) |
+    Yihe Li (Student ID: 1009802331) \\
+    Qianwen Wang (Student ID: 1009985358) |
+    Seonghyun Ban  (Student ID: 1005127738)
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\input{component/intro}
+
+\newpage
+\input{component/part1}
+
+\newpage
+\input{component/part2}
+
+\newpage
+\input{component/part3}
+
+\newpage
+\input{component/part4}
+
+\newpage
+\input{component/part5}
+
+\newpage
+\input{component/appendix}
+
+\end{document}
