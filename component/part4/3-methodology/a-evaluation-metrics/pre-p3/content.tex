@@ -1,0 +1,25 @@
+\paragraph{Post-training metrics.}
+We evaluate each run's final checkpoint on all 1319 GSM8K test problems, generating 8 samples per problem.
+The primary metrics are:
+
+\begin{itemize}[nosep]
+    \item \textbf{Pass@1}: fraction of problems where the first sampled response is correct. This is the headline accuracy metric.
+    \item \textbf{Pass@8}: fraction of problems where at least one of 8 sampled responses is correct. This measures the model's knowledge ceiling---problems it \emph{can} solve but may not solve reliably.
+    \item \textbf{Pass@8--Pass@1 gap}: the difference between pass@8 and pass@1, quantifying consistency. A large gap indicates the model has learned the reasoning but applies it unreliably.
+    \item \textbf{Extraction failure rate}: fraction of responses that do not contain a parseable \texttt{\#\#\#\# <number>} answer. This measures format compliance at the population level.
+    \item \textbf{Net problem delta}: count of problems that flip from incorrect to correct (gained) or correct to incorrect (lost) relative to the baseline run, decomposing accuracy changes into specific improvements and regressions.
+\end{itemize}
+
+\paragraph{Training-time metrics.}
+We log the following to W\&B at every training step:
+
+\begin{itemize}[nosep]
+    \item \textbf{Mean reward}: total reward averaged across all samples, tracking the overall learning signal.
+    \item \textbf{Per-component mean reward}: reward from each individual function (correctness, format compliance, numeric proximity, etc.), enabling attribution of reward signal to specific components.
+    \item \textbf{Mean sequence length}: average response length in tokens, used to detect degenerate behaviors such as response collapse or length exploitation.
+\end{itemize}
+
+\paragraph{Mistake taxonomy.}
+We apply a rule-based taxonomy to classify each failed problem's model output into one of six categories.
+This enables comparison of error distributions across runs, revealing whether a reward shifts the model's failure modes rather than simply improving or degrading accuracy.
+The taxonomy categories are defined in Section~\ref{sec:error-analysis}.

@@ -1,0 +1,24 @@
+\subsubsection{Experimental Setup}
+
+\paragraph{Starting checkpoint.}
+All runs begin from the Part 2 best SFT checkpoint: \texttt{a4p2-sft-metamath-swiglu} at step 24633, which achieves 15.39\% strict accuracy and 88.93\% parseable rate on GSM8K.
+We use the SFT checkpoint rather than the base pretrained model because it provides a stronger starting point with basic instruction-following capability already established.
+
+\paragraph{RL configuration.}
+All runs use identical hyperparameters, held constant to isolate the effect of reward composition:
+
+\begin{itemize}[nosep]
+    \item Algorithm: REINFORCE (no KL regularization, no PPO clipping)
+    \item Training steps: 467
+    \item Examples per step: 16, samples per example: 16
+    \item Maximum generation length: 256 tokens
+    \item Temperature: 1.0, top-$k$: 50
+    \item Learning rates: matrix 0.02, embedding 0.2, unembedding 0.004
+    \item LR schedule: linear rampdown from initial fraction to 0
+    \item Advantage computation: mean subtraction (not $z$-score normalization)
+\end{itemize}
+
+\paragraph{Infrastructure.}
+Training runs use 8$\times$H100 GPUs on Modal with \texttt{torchrun} for DDP.
+Post-training evaluation is sharded across 8 containers, each evaluating a subset of the 1319 GSM8K test problems.
+All training metrics are logged to W\&B (project: \texttt{490-autobook-a4}).

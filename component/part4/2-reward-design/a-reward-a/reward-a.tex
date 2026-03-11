@@ -1,0 +1,28 @@
+\subsubsection{Reward A: Format Compliance}
+
+\paragraph{Definition.}
+Format compliance is a binary reward that returns 1.0 if the model's response contains a parseable answer in the expected \texttt{\#\#\#\# <number>} format, and 0.0 otherwise.
+Formally:
+\[
+R_A(\text{response}) =
+\begin{cases}
+1.0 & \text{if } \texttt{\#\#\#\# (-?[0-9.,]+)} \text{ matches} \\
+0.0 & \text{otherwise}
+\end{cases}
+\]
+
+\paragraph{Rationale.}
+Analysis of the SFT baseline (15.39\% strict accuracy) reveals that approximately 11\% of responses fail to produce any parseable answer.
+These responses receive zero reward from the correctness function regardless of their reasoning quality, providing no learning signal.
+By rewarding format compliance independently, we decouple format learning from mathematical reasoning.
+This is particularly valuable early in training when most or all 16 sampled responses per problem may be incorrect: the format reward still provides non-zero advantage variance, enabling gradient updates even when correctness-based reward is uniformly zero.
+
+\paragraph{Literature.}
+Format compliance rewards are standard practice in RLVR implementations for GSM8K.
+The GSM8K-RLVR benchmark, veRL framework, and Unsloth RL documentation all include format-checking as a reward component.
+The motivation is consistent across these works: ensuring the model learns to produce extractable answers is a prerequisite for the correctness signal to be effective.
+
+\paragraph{Alternatives considered.}
+We considered a calculator usage reward (rewarding invocation of calculator tools) and a reasoning structure reward (rewarding chain-of-thought formatting).
+Calculator usage was rejected because it risks incentivizing meaningless tool calls that do not contribute to problem solving.
+Reasoning structure was rejected because it is susceptible to reward hacking via padding attacks, where the model inflates response length without improving reasoning quality (Gao et al., 2024).

@@ -1,0 +1,28 @@
+\subsubsection{Limitations}
+
+Several limitations constrain the generalizability of our findings.
+
+\paragraph{Reward design scope.}
+All rewards are designed specifically for GSM8K's answer format (\texttt{\#\#\#\# <number>}).
+Format compliance and numeric proximity both depend on this structure and would not transfer to tasks with non-numeric or free-form answers without redesign.
+
+\paragraph{Reward hacking risk.}
+The format compliance reward incentivizes producing the \texttt{\#\#\#\#} marker regardless of reasoning quality.
+Without KL regularization, the model could learn to produce well-formatted but poorly-reasoned responses.
+Similarly, numeric proximity could incentivize guessing numbers close to common answer magnitudes rather than performing actual computation.
+
+\paragraph{Scale.}
+We evaluate on a single SFT checkpoint, a single dataset (GSM8K), and a single RL algorithm (REINFORCE).
+Results may not generalize to stronger base models, harder math benchmarks, or more sophisticated RL algorithms such as PPO or GRPO with KL penalties.
+
+\paragraph{Reward composition.}
+Rewards are summed with equal weight.
+We do not explore reward weighting, scheduling, or curriculum strategies that might improve the combined run's performance.
+
+\paragraph{Statistical significance.}
+We report single-run results without confidence intervals or multiple seeds.
+Differences below 2 percentage points should be interpreted with caution, and even larger differences may not be robust across random seeds.
+
+\paragraph{Mistake taxonomy.}
+Our rule-based taxonomy (Section 4.2) uses simple heuristics (character count thresholds, regex patterns, relative error cutoffs) that may misclassify edge cases.
+For example, a response with correct reasoning but a transcription error in the final line would be classified as ``arithmetic error'' or ``wrong setup'' rather than a more nuanced category.

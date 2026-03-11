@@ -1,0 +1,8 @@
+Part 3 trained a base model on GSM8K using a single binary correctness reward via REINFORCE.
+While this establishes a functional RL pipeline, a single reward provides limited learning signal---responses are either fully correct or receive zero reward, leaving no gradient for partial progress.
+Part 4 addresses this by designing four additional reward functions (A--D) that target specific failure modes observed in the trained model.
+Rewards A and B are pre-designed from literature and baseline error analysis: format compliance (addressing the \textasciitilde11\% of responses that lack a parseable answer format) and numeric proximity (providing graded signal for the \textasciitilde74\% that format correctly but produce wrong answers).
+Rewards C and D are designed after receiving the Part 3 error analysis deliverable, targeting failure patterns identified therein.
+We evaluate these rewards through a six-run ablation: a baseline (correctness only), four separate runs (correctness + one additional reward each), and a combined run (all rewards together).
+Each run uses the same SFT checkpoint and identical RL configuration, varying only the reward composition.
+We compare runs on pass@1, pass@8, extraction failure rate, and a rule-based mistake taxonomy, and report training dynamics from W\&B logs.

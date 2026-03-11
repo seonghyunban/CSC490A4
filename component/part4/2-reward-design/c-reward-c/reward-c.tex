@@ -1,0 +1,27 @@
+\subsubsection{Reward C: Coherence}
+
+\paragraph{Definition.}
+Coherence is a continuous reward that scores how much a response resembles structured mathematical reasoning, penalizing gibberish and token soup.
+It combines two signal groups:
+
+\begin{itemize}[nosep]
+    \item \textbf{Anti-gibberish} (40\% weight): penalizes CamelCase tokens (internal capitals, e.g.\ ``MesotheliomaGarvey'') and mega-tokens (>15 alphabetic characters), both hallmarks of degenerate text.
+    \item \textbf{Pro-coherence} (60\% weight): rewards sentence breaks with capitalization, arithmetic expressions ($\texttt{digits} \pm \texttt{digits}$), numeric content, and math-domain vocabulary (``therefore'', ``total'', ``each'', ``per'', etc.).
+\end{itemize}
+
+The final score is $R_C = 0.4 \cdot \text{anti\_gibberish} + 0.6 \cdot \text{pro\_coherence}$, clamped to $[0, 1]$.
+Responses shorter than 20 characters or fewer than 3 tokens receive 0.0.
+
+\paragraph{Rationale.}
+In standard RLHF, a KL divergence penalty $\beta \cdot D_\text{KL}(\pi_\theta \| \pi_\text{ref})$ prevents the policy from degenerating into incoherent text (Ouyang et al., 2022; Stiennon et al., 2020).
+Our REINFORCE setup omits this penalty entirely---without it, 32\% of baseline responses degenerate into gibberish.
+C serves as a lightweight, output-side proxy for the same anti-degeneration effect.
+
+\paragraph{Literature.}
+DeepSeek-R1 (2025) uses a format reward alongside accuracy to maintain output structure, deliberately choosing rule-based rewards over neural reward models to resist reward hacking.
+The FIRE framework (2024) proposes fine-grained rewards to address text degeneration in RL.
+Our approach adapts these principles with domain-specific heuristics tuned for GSM8K-style mathematical reasoning.
+
+\paragraph{Calibration.}
+On baseline eval data ($n = 10{,}462$ responses): correct responses score mean 0.961, wrong-but-parseable responses score 0.969, and wrong-unparseable responses score 0.454.
+The reward correctly separates coherent from incoherent text while not discriminating between correct and incorrect coherent responses---it rewards the prerequisite (coherence) without conflating it with the outcome (correctness).

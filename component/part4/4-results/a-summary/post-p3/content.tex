@@ -1,0 +1,57 @@
+Table~\ref{tab:p4-summary-full} extends the summary to all ten runs.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Run} & \textbf{Pass@1 (\%)} & \textbf{Pass@8 (\%)} & \textbf{Gap (\%)} & \textbf{Extr.\ Fail (\%)} & \textbf{$\Delta$Pass@1} \\
+\midrule
+Baseline        & 9.7  & 24.9 & 15.2 & 60.3          & ---  \\
+\midrule
++ A (Format)    & 12.3 & 33.3 & 21.0 & 34.8          & +2.6 \\
++ B (Proximity) & 10.4 & 26.5 & 16.1 & 53.5          & +0.7 \\
+A+B             & 11.9 & 30.3 & 18.3 & 39.6          & +2.2 \\
+\midrule
++ C (Coherence) & 12.9 & 36.2 & 23.4 & 25.3          & +3.2 \\
++ D (Entity)    & 11.8 & 30.4 & 18.7 & 44.5          & +2.0 \\
++ E (Number)    & 13.8 & 37.2 & 23.4 & 22.7          & +4.1 \\
+C+D             & 12.8 & 37.8 & 24.9 & 22.8          & +3.1 \\
+C+D+E           & 13.1 & \textbf{39.1} & \textbf{26.0} & \textbf{15.9} & +3.4 \\
+\midrule
+Combined All    & \textbf{14.6} & 35.6 & 21.0 & 20.0 & \textbf{+4.9} \\
+\bottomrule
+\end{tabular}
+\caption{Summary of evaluation results across all ten runs. Best per column in \textbf{bold}.}
+\label{tab:p4-summary-full}
+\end{table}
+
+Number grounding (E) is the strongest individual reward (+4.1pp), surpassing coherence (C, +3.2pp) and format compliance (A, +2.6pp).
+The combined all run achieves the highest Pass@1 at 14.6\% (+4.9pp over baseline), while C+D+E achieves the highest Pass@8 (39.1\%) and lowest extraction failure rate (15.9\%).
+The gap between C+D+E's Pass@8 (39.1\%) and its Pass@1 (13.1\%) is the widest of any configuration (26.0pp), indicating the grounding rewards teach the model to solve many problems but not yet reliably.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Run} & \textbf{Gained} & \textbf{Lost} & \textbf{Net} \\
+\midrule
++ A (Format)    & 79  & 45 & 34 \\
++ B (Proximity) & 55  & 46 & 9  \\
+A+B             & 77  & 48 & 29 \\
+\midrule
++ C (Coherence) & 91  & 49 & 42 \\
++ D (Entity)    & 76  & 49 & 27 \\
++ E (Number)    & 98  & 44 & 54 \\
+C+D             & 96  & 55 & 41 \\
+C+D+E           & 96  & 51 & 45 \\
+\midrule
+Combined All    & 113 & 49 & \textbf{64} \\
+\bottomrule
+\end{tabular}
+\caption{Per-problem correctness changes vs.\ Baseline across all ten runs.}
+\label{tab:p4-gained-lost-full}
+\end{table}
+
+Reward E gains 98 problems with the fewest losses of any individual reward (44), yielding the highest individual net (+54).
+The combined all run gains 113 problems while losing only 49 (net +64), more than any other configuration.
+The loss count remains stable across all configurations (44--55), reinforcing the observation that a fixed population of problems becomes harder under any reward perturbation.

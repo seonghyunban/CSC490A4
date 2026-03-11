@@ -1,0 +1,20 @@
+\paragraph{Reward C: Coherence.}
+Coherence produces +3.2pp Pass@1 (9.7\% $\to$ 12.9\%) and the second-largest reduction in extraction failures (60.3\% $\to$ 25.3\%).
+Its anti-gibberish mechanism eliminates both incoherent responses and poorly-formatted ones simultaneously, explaining why it outperforms format compliance (A) despite not directly targeting format: ``no answer'' drops from 32.1\% to 7.7\% ($-$24.4pp).
+
+Training dynamics reinforce this: C peaks late (step 785) with sustained improvement, unlike the early-peak-then-decline pattern of binary rewards (A, D).
+This suggests that coherence provides a smoother optimization landscape---there is always a gradient from less coherent to more coherent text, whereas binary rewards quickly saturate.
+The net problem delta (+42, from 91 gained and 49 lost) confirms meaningful improvement.
+
+\paragraph{Reward D: Entity Grounding.}
+Entity grounding provides +2.0pp improvement (9.7\% $\to$ 11.8\%), just at the significance threshold.
+The entity grounding component maintains a high value throughout training (0.871 at end), suggesting that once the model produces coherent text, it naturally references question entities---D reinforces an existing tendency rather than teaching a new behavior.
+The C+D combination (12.8\% Pass@1) does not exceed C alone (12.9\%), though C+D achieves the highest Pass@8 among pairs (37.8\%), indicating D contributes diversity of correct solutions.
+
+\paragraph{Reward E: Number Grounding.}
+Number grounding is the strongest individual reward at +4.1pp (9.7\% $\to$ 13.8\%), with the highest individual net gain (+54, from 98 gained and only 44 lost---the fewest losses of any reward).
+E achieves format-failure reduction comparable to C: ``no answer'' drops to 5.5\% and ``format only'' to 6.7\%.
+This is surprising---number grounding does not directly target format, but rewarding responses that contain the question's numbers implicitly encourages structured mathematical text with parseable answers.
+
+E's strength relative to D likely reflects its universal coverage: every GSM8K question contains numbers, while $\sim$3--5\% lack proper nouns.
+Additionally, number overlap is a stronger necessary condition for correct problem-solving than entity overlap, since the model must use the question's specific values in its calculations.

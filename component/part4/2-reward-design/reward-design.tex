@@ -1,0 +1,13 @@
+\subsection{Reward Design}
+
+All additional rewards are designed to complement the original binary correctness reward rather than replace it.
+Each reward maps a model response to a scalar in $[0, 1]$, and rewards are summed during advantage computation.
+Rewards A and B target non-overlapping failure modes identified from the SFT baseline: A addresses responses lacking a parseable answer format, while B provides partial credit for formatted-but-wrong answers.
+Rewards C, D, and E are designed from exploratory data analysis of the pre-P3 RL runs, which revealed that 82\% of ``correct'' responses are reward hacking---solving a different problem that coincidentally produces the right number.
+C addresses text degeneration (32\% gibberish), while D and E enforce input grounding by checking entity and number overlap between question and response.
+All five rewards are rule-based with no learned components, following the principle advocated by DeepSeek-R1 (2025) that verifiable rewards resist reward hacking better than neural reward models.
+
+\input{component/part4/2-reward-design/a-reward-a/reward-a}
+\input{component/part4/2-reward-design/b-reward-b/reward-b}
+\input{component/part4/2-reward-design/c-reward-c/reward-c}
+\input{component/part4/2-reward-design/d-reward-d/reward-d}

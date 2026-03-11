@@ -1,0 +1,34 @@
+\subsubsection{Rewards D and E: Input Grounding}
+
+\paragraph{Motivation.}
+Exploratory data analysis revealed that 82\% of ``correct'' baseline responses solve a completely different GSM8K problem that coincidentally produces the matching number.
+For example, a question about ``James running sprints'' (gold = 5) receives a response about ``Quinn running laps... 7 $-$ 2 = 5'' marked correct.
+This is reward hacking: the binary correctness reward checks only the final number against gold, providing no incentive to read the input.
+Rewards D and E address this by checking whether the response references entities and numbers from the question.
+
+\paragraph{Reward D: Entity Grounding.}
+D measures the fraction of proper nouns in the question that also appear in the response:
+\[
+R_D = \frac{|\text{entities}_\text{response} \cap \text{entities}_\text{question}|}{|\text{entities}_\text{question}|}
+\]
+Entities are extracted via capitalization heuristic (capitalized words not at sentence start, length > 2).
+If the question contains no proper nouns, $R_D = 1.0$ (conservative fallback, affects $\sim$3--5\% of GSM8K questions).
+
+\paragraph{Reward E: Number Grounding.}
+E measures the fraction of numbers in the question that also appear in the response:
+\[
+R_E = \frac{|\text{numbers}_\text{response} \cap \text{numbers}_\text{question}|}{|\text{numbers}_\text{question}|}
+\]
+Numbers are extracted via regex ($\texttt{\textbackslash b\textbackslash d+\textbackslash.?\textbackslash d*\textbackslash b}$).
+E provides universal coverage (every GSM8K question contains numbers) but weaker signal than D due to frequent number collisions (many problems use common values like 2, 3, 10).
+
+\paragraph{Complementarity.}
+D and E form a multi-signal grounding check inspired by entity-level factual consistency metrics from summarization (Nan et al., EACL 2021).
+D has high precision but partial coverage (questions without proper nouns); E has universal coverage but lower precision.
+Together they implement a necessary-condition check: a response that faithfully solves the given problem must reference both the entities and numbers from the question.
+
+\paragraph{Literature.}
+Nan et al.\ (2021) introduce entity-level factual consistency for abstractive summarization, finding that entity hallucination is a primary failure mode.
+The Entity Hallucination Index has been used as a direct RL reward signal for entity-grounded generation.
+Fu et al.\ (2025) show that multi-component reward shaping mitigates reward hacking by preventing exploitation of any single signal.
+Our D and E adapt these faithfulness metrics from summarization to math QA.

@@ -1,0 +1,40 @@
+\paragraph{Ablation design.}
+We conduct six runs, each varying only the reward function composition while holding all other variables constant (Section 3.2).
+The runs are:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Run} & \textbf{Correctness} & \textbf{A (Format)} & \textbf{B (Proximity)} & \textbf{C} & \textbf{D} \\
+\midrule
+Baseline        & \checkmark & -- & -- & -- & -- \\
+Separate A      & \checkmark & \checkmark & -- & -- & -- \\
+Separate B      & \checkmark & -- & \checkmark & -- & -- \\
+Separate C      & \checkmark & -- & -- & \checkmark & -- \\
+Separate D      & \checkmark & -- & -- & -- & \checkmark \\
+Combined        & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\caption{Reward composition per run. All runs include the original correctness reward.}
+\end{table}
+
+\paragraph{Comparison tiers.}
+We organize comparisons into three tiers of increasing depth:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Tier 1 --- Headline comparisons}: Combined vs.\ Baseline, and each Separate run vs.\ Baseline. These address whether additional rewards help and which ones help most.
+    \item \textbf{Tier 2 --- Interaction analysis}: Each Separate run vs.\ Combined. This reveals whether rewards interact constructively (synergy), destructively (interference), or independently (additive).
+    \item \textbf{Tier 3 --- Error distribution}: Mistake category distributions across runs. This addresses whether rewards shift the \emph{type} of errors, not just the overall error rate.
+\end{enumerate}
+
+\paragraph{Significance criteria.}
+Given single-seed runs without confidence intervals, we apply the following thresholds:
+
+\begin{itemize}[nosep]
+    \item Accuracy difference $< 1\%$: treated as noise.
+    \item Accuracy difference $1$--$2\%$: marginal, reported with caveat.
+    \item Accuracy difference $> 2\%$: likely meaningful.
+    \item Error category shift $> 5$ percentage points: meaningful structural change.
+    \item Rank-order change among the top-3 error categories: meaningful shift in failure profile.
+\end{itemize}

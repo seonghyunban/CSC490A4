@@ -1,0 +1,7 @@
+We designed five additional reward functions for GSM8K RL training, targeting format compliance (A), numeric proximity (B), text coherence (C), entity grounding (D), and number grounding (E).
+Number grounding (E) proved the most effective individual reward (+4.1pp Pass@1), followed by coherence (C, +3.2pp) and format compliance (A, +2.6pp), while numeric proximity (B, +0.7pp) fell below the noise threshold.
+The combined run with all five rewards achieved the strongest overall improvement (+4.9pp Pass@1, from 9.7\% to 14.6\%), with extraction failures dropping from 60.3\% to 20.0\%.
+The C+D+E combination achieved the highest Pass@8 (39.1\%) and lowest extraction failure rate (15.9\%) of any configuration, though with a wider consistency gap.
+Error analysis revealed a consistent structural shift: format-related failures decreased from 70.7\% to 12.7\% of errors in the combined run, while reasoning failures (wrong setup, arithmetic error) rose to dominate at 62.5\%, exposing the underlying reasoning bottleneck.
+Exploratory data analysis uncovered pervasive reward hacking---82\% of ``correct'' baseline responses solve a different problem by coincidence---motivating the grounding rewards that directly penalize input-unfaithful responses.
+The rewards composed constructively in combination, with gains scaling with reward count while losses remained stable at 44--55 problems, suggesting that additional orthogonal reward signals yield diminishing but positive returns.
