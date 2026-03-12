@@ -1,0 +1,168 @@
+\subsection{Codebase Organization}
+\nestindent
+
+This project spans two repositories: the \texttt{nanochat} training framework, which was extended with a modular reward system, and the \texttt{AI-Accountant} experiment repository, which houses the pipeline scripts, run configurations, and collected results for the 10-run ablation study.
+A snapshot of the modified nanochat files is kept under \texttt{a4/p4/nanochat/} so that the experiment directory is self-contained and reproducible without depending on a specific nanochat commit.
+
+\definecolor{dircmt}{HTML}{6A737D}
+\definecolor{filecmt}{HTML}{FF9966}
+\newcommand{\cmt}[1]{\normalfont{\textcolor{dircmt}{\textit{#1}}}}
+\newcommand{\fcmt}[1]{\normalfont{\textcolor{filecmt}{\textit{#1}}}}
+
+\subsubsection{Nanochat Modifications}
+\nestindent
+
+\small
+\begin{forest}
+  for tree={
+    font=\ttfamily\small,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+      \noexpand\path [draw, -{|}] (!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+      if n=1 {insert before={[,phantom]}} {}
+    },
+    fit=band,
+    before computing xy={l=15pt},
+    s sep=3pt,
+  }
+  [nanochat/
+    [chat\_rl.py \fcmt{accepts --reward-config JSON; logs per-reward W\&B metrics}]
+    [tasks/
+      [gsm8k.py \fcmt{dispatches active rewards via REWARD\_REGISTRY dict}]
+      [rewards/ \cmt{new directory, 8 files}
+        [correctness.py \fcmt{binary match against gold answer}]
+        [format\_compliance.py \fcmt{Reward A: 1.0 if \#\#\#\# marker present, else 0.0}]
+        [numeric\_proximity.py \fcmt{Reward B: partial credit scaled by distance to gold}]
+        [coherence.py \fcmt{Reward C: penalizes gibberish, rewards structured text}]
+        [entity\_grounding.py \fcmt{Reward D: fraction of question proper nouns in response}]
+        [number\_grounding.py \fcmt{Reward E: fraction of question numbers in response}]
+        [gsm8k\_utils.py \fcmt{shared answer-extraction regex and number parsing}]
+      ]
+    ]
+  ]
+\end{forest}
+\normalsize
+
+\nestunindent
+\subsubsection{Shared Infrastructure}
+\nestindent
+
+\small
+\begin{forest}
+  for tree={
+    font=\ttfamily\small,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+      \noexpand\path [draw, -{|}] (!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+      if n=1 {insert before={[,phantom]}} {}
+    },
+    fit=band,
+    before computing xy={l=15pt},
+    s sep=3pt,
+  }
+  [a4/shared/ \cmt{pipeline infrastructure shared across all parts}
+    [scripts/
+      [main.py \fcmt{local CLI entrypoint: reads YAML, launches Modal}]
+      [runners/
+        [train.py \fcmt{launches nanochat training; modified to pass --rewards list}]
+        [run.py \fcmt{orchestrates train then eval stages from YAML config}]
+        [evaluate.py \fcmt{runs evaluation jobs on Modal GPU}]
+      ]
+      [shared/
+        [infra.py \fcmt{defines Modal app, container image, volumes, secrets}]
+        [helpers.py \fcmt{git checkout, checkpoint discovery, result parsing}]
+      ]
+    ]
+  ]
+\end{forest}
+\normalsize
+
+\nestunindent
+\subsubsection{Experiment Directory}
+\nestindent
+
+\small
+\begin{forest}
+  for tree={
+    font=\ttfamily\small,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+      \noexpand\path [draw, -{|}] (!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+      if n=1 {insert before={[,phantom]}} {}
+    },
+    fit=band,
+    before computing xy={l=15pt},
+    s sep=3pt,
+  }
+  [a4/p4/ \cmt{reward design and ablation study}
+    [nanochat/ \cmt{snapshot of modified nanochat files for reproducibility}
+      [scripts/
+        [chat\_rl.py]
+      ]
+      [tasks/
+        [gsm8k.py]
+        [rewards/ \cmt{8 files}]
+      ]
+    ]
+    [scripts/
+      [collect.py \fcmt{pulls 8 eval shards per run from Modal + W\&B metrics}]
+      [process.py \fcmt{classifies errors via D9 taxonomy, aggregates per-run stats}]
+      [produce.py \fcmt{renders tables T1--T5, figures F2--F5, and p4\_macros.tex}]
+      [eda.py \fcmt{generates baseline-only exploratory figures and feature CSVs}]
+    ]
+    [configs/ \cmt{16 YAML files}
+      [collect.yaml \fcmt{maps run names to Modal volume paths and W\&B run IDs}]
+      [p4\_baseline.yaml \fcmt{correctness reward only}]
+      [p4\_separate\_a..e.yaml \fcmt{one auxiliary reward each (5 files)}]
+      [p4\_combined\_ab/cd/cde.yaml \fcmt{multi-reward combinations (3 files)}]
+      [p4\_combined.yaml \fcmt{all five auxiliary rewards active}]
+      [p4\_template.yaml \fcmt{template for creating new run configs}]
+      [p4\_smoke.yaml \fcmt{fast validation configs (3 files)}]
+    ]
+    [evals/
+      [gsm8k\_eval\_rl.py \fcmt{generates 8 samples per GSM8K test problem}]
+    ]
+    [tests/
+      [smoke\_local.py \fcmt{unit tests for reward functions without GPU}]
+    ]
+    [results/
+      [collected/
+        [eval/ \cmt{10 merged per-run JSONs + 80 raw shards}]
+        [wandb/ \cmt{10 training metric JSONs from W\&B}]
+      ]
+      [eda/ \cmt{baseline exploratory outputs}
+        [fig\_.pdf \fcmt{12 analysis figures}]
+        [.txt \fcmt{alignment analysis, interesting problems, summary}]
+        [.csv \fcmt{per-problem and per-response feature matrices}]
+      ]
+      [assets/ \cmt{publication-ready outputs}
+        [fig2--fig5.pdf \fcmt{4 main writeup figures}]
+        [t1--t5.tex \fcmt{6 LaTeX table fragments}]
+        [p4\_macros.tex \fcmt{auto-generated metric macros for all 10 runs}]
+      ]
+      [processed.json \fcmt{full D9 taxonomy + aggregated metrics for all runs}]
+    ]
+  ]
+\end{forest}
+\normalsize
+
+\nestunindent
+\nestunindent

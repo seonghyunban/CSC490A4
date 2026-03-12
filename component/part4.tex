@@ -1,13 +1,98 @@
+\input{component/figures/p4/p4_macros}
+
 \section{Part 4: Additional Reward Functions}
+\nestindent
 
-\input{component/part4/1-introduction/introduction}
+    \input{component/part4/1-introduction/introduction}
 
-\input{component/part4/2-reward-design/reward-design}
+    \input{component/part4/2-eda/eda}
 
-\input{component/part4/3-methodology/methodology}
+    \input{component/part4/2-reward-design/reward-design}
 
-\input{component/part4/4-results/results}
+    \input{component/part4/3-methodology/methodology}
 
-\input{component/part4/5-discussion/discussion}
+    \input{component/part4/4-results/results}
 
-\input{component/part4/6-conclusion/conclusion}
+    \input{component/part4/5-discussion/discussion}
+
+    \input{component/part4/6-conclusion/conclusion}
+
+    \subsection{Limitations}
+    \nestindent
+        \input{component/part4/7-limitations/limitations}
+    \nestunindent
+
+    \newpage
+    \subsection{Part 4 References}
+    \nestindent
+    \renewcommand{\refname}{}
+    \vspace{-2em}
+    \begin{thebibliography}{11}
+
+        \bibitem{ng1999reward}
+        Ng, A.~Y., Harada, D., and Russell, S.~J.
+        ``Policy invariance under reward transformations: Theory and application to reward shaping.''
+        \textit{Proc.\ ICML}, 1999.
+
+        \bibitem{stiennon2020summarize}
+        Stiennon, N., Ouyang, L., Wu, J., et~al.
+        ``Learning to summarize from human feedback.''
+        \textit{NeurIPS}, 2020.
+        \url{https://arxiv.org/abs/2009.01325}
+
+        \bibitem{ouyang2022training}
+        Ouyang, L., Wu, J., Jiang, X., et~al.
+        ``Training language models to follow instructions with human feedback.''
+        \textit{NeurIPS}, 2022.
+        \url{https://arxiv.org/abs/2203.02155}
+
+        \bibitem{nan2021entity}
+        Nan, F., Nallapati, R., Wang, Z., et~al.
+        ``Entity-level factual consistency of abstractive text summarization.''
+        \textit{Proc.\ EACL}, 2021.
+        \url{https://arxiv.org/abs/2102.09130}
+
+        \bibitem{gao2024reward}
+        Gao, J., et~al.
+        ``On designing effective RL reward at training time for LLM reasoning.''
+        \textit{arXiv preprint arXiv:2410.15115}, 2024.
+        \url{https://arxiv.org/abs/2410.15115}
+
+        \bibitem{deepseekr1}
+        DeepSeek-AI.
+        ``DeepSeek-R1: Incentivizing reasoning capability in LLMs via reinforcement learning.''
+        \textit{arXiv preprint arXiv:2501.12948}, 2025.
+        \url{https://arxiv.org/abs/2501.12948}
+
+        \bibitem{coste2024ensemble}
+        Coste, T., Anwar, U., Kirk, R., and Krueger, D.
+        ``Reward model ensembles help mitigate overoptimization.''
+        \textit{Proc.\ ICLR}, 2024.
+        \url{https://arxiv.org/abs/2310.02743}
+
+        \bibitem{uesato2022solving}
+        Uesato, J., Kushman, N., Kumar, R., et~al.
+        ``Solving math word problems with process- and outcome-based feedback.''
+        \textit{arXiv preprint arXiv:2211.14275}, 2022.
+        \url{https://arxiv.org/abs/2211.14275}
+
+        \bibitem{gsm8k_rlvr}
+        GSM8K-RLVR Benchmark.
+        \url{https://huggingface.co/datasets/allenai/gsm8k-rlvr}
+
+        \bibitem{verl}
+        veRL: Volcano Engine Reinforcement Learning for LLMs.
+        \url{https://github.com/volcengine/verl}
+
+        \bibitem{unsloth}
+        Unsloth AI.
+        ``GRPO and reward functions for RL fine-tuning.''
+        \url{https://unsloth.ai/docs/get-started/reinforcement-learning-rl-guide}
+
+    \end{thebibliography}
+    \nestunindent
+
+    \newpage
+    \input{component/part4/8-codebase/codebase}
+
+\nestunindent

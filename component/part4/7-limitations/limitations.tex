@@ -1,0 +1,9 @@
+Our rewards target GSM8K's \texttt{\#\#\#\# <number>} format specifically and would not transfer to free-form tasks.
+Rewards are summed with equal weight, which may underweight effective rewards and overweight ineffective ones.
+We report single-seed results without confidence intervals, so effects below 2 percentage points may be noise rather than signal.
+Most substantively, our REINFORCE setup lacks KL regularization, so the model can exploit reward signals without constraint---we only detect this post-hoc via exploratory analysis.
+Our mistake taxonomy classifies errors by surface-level symptoms, so it may label a typo and a fundamental misunderstanding identically.
+
+Compute constraints also prevented us from running + D+E and + C+E configurations, so we cannot empirically confirm D$\leftrightarrow$E complementarity or the C$\to$E prerequisite independently of D.
+
+We worked within these constraints: multiple seeds across 10 configurations exceeded our compute budget, KL regularization would require modifying nanochat's training loop to maintain a reference model, which is outside the scope of this assignment---we design rewards, not modify the RL algorithm---and the ablation's purpose was to isolate whether each reward helps rather than to optimize weights or build a fine-grained error ontology.

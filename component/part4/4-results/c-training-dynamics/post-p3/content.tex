@@ -1,12 +1,12 @@
-\paragraph{Post-P3 training dynamics.}
+\textbf{Post-P3 training dynamics.}
 The post-P3 runs reveal distinct training signatures for each reward type.
 
-Separate C (coherence) peaks late at step 785 with the highest correctness component of any individual run (0.473 at training end), compared to the baseline's 0.391.
-Unlike the format reward which peaks early and declines, coherence provides sustained learning signal throughout training---its anti-gibberish and pro-structure components continue to differentiate responses even as the model improves.
+The + C run (surface non-degeneracy) peaks late at step 785 with the highest correctness component of any individual run (0.473 at training end), compared to the baseline's 0.391.
+Unlike the format reward which peaks early and declines, C provides sustained learning signal throughout training---its anti-gibberish and pro-structure components continue to differentiate responses even as the model improves.
 Sequence length decreases moderately (216.5 $\to$ 169.4), avoiding the length explosion seen with format compliance alone.
 
-Separate D (entity grounding) peaks early at step 39, similar to format compliance, and ends with correctness at 0.441.
-The entity grounding component remains high throughout (0.871 at end), suggesting most coherent responses naturally reference question entities.
+The + D run (entity grounding) peaks early at step 39, similar to format compliance, and ends with correctness at 0.441.
+The entity grounding component remains high throughout (0.871 at end), suggesting most well-formed responses naturally reference question entities.
 
-The combined all run ends with the highest correctness (0.461) and maintains all component rewards at healthy levels: coherence 0.907, entity grounding 0.830, number grounding 0.874, format compliance 0.867, and numeric proximity 0.619.
+The Comb.\ All run ends with the highest correctness (0.461) and maintains all component rewards at healthy levels: non-degeneracy 0.907, entity grounding 0.830, number grounding 0.874, format compliance 0.867, and numeric proximity 0.619.
 No single component collapses, indicating the rewards compose without destructive interference at the training-signal level.

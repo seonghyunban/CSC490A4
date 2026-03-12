@@ -1,9 +1,13 @@
 \subsection{Methodology}
+\nestindent
 
-We adopt an ablation-style experimental design: all runs share the same SFT starting checkpoint and identical RL hyperparameters, varying only the reward function composition.
-This isolates the effect of each reward addition.
-We observe two measurement points per run: training-time metrics logged to W\&B every step, and a full post-training evaluation on the GSM8K test set (1319 problems, 8 samples each).
+We ran a reward ablation study across ten configurations, varying only the reward function composition while holding all other variables constant.
+We analyze the results along four dimensions: individual impact, interaction effects, failure mode distribution, and training dynamics.
 
-\input{component/part4/3-methodology/a-evaluation-metrics/evaluation-metrics}
-\input{component/part4/3-methodology/b-experimental-setup/experimental-setup}
-\input{component/part4/3-methodology/c-comparison-structure/comparison-structure}
+    \input{component/part4/3-methodology/d-ablation-design/ablation-design}
+    \input{component/part4/3-methodology/a-evaluation-metrics/evaluation-metrics}
+    \input{component/part4/3-methodology/e-dimensions-of-analysis/dimensions-of-analysis}
+    \input{component/part4/3-methodology/f-significance-criteria/significance-criteria}
+    \input{component/part4/3-methodology/b-experimental-setup/experimental-setup}
+
+\nestunindent

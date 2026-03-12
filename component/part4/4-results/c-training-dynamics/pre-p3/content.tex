@@ -1,46 +1,29 @@
-We examine three training-time signals logged to W\&B at every step across all four pre-P3 runs (467 steps each).
+We examine per-step training signals logged to W\&B across all 10 runs (467 steps each).
+Figure~\ref{fig:p4-training-dynamics} shows mean reward, Pass@1, per-component rewards, and sequence length.
 
-\paragraph{Mean reward curves.}
-Figure~\ref{fig:p4-reward-curves} shows the total mean reward per step.
-All runs exhibit a sharp initial improvement followed by a decline toward the starting level, consistent with REINFORCE training on a small model without KL regularization.
-
-\begin{figure}[H]
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
 \centering
-\includegraphics[width=\textwidth]{component/figures/p4/fig_reward_curves.pdf}
-\caption{Mean total reward over training steps for all four pre-P3 runs.}
-\label{fig:p4-reward-curves}
-\end{figure}
+\includegraphics[width=\linewidth]{component/figures/p4/fig5_training_dynamics.pdf}
+\captionof{figure}{Training dynamics across all 10 runs. (a)~Mean total reward per step. (b)~Pass@1 over training. (c)~Per-component reward curves for the Comb.\ All run. (d)~Mean sequence length over training.}
+\label{fig:p4-training-dynamics}
+\end{minipage}
+\vspace{1em}
 
+\textbf{Mean reward curves.}
+All runs exhibit a sharp initial improvement followed by a decline toward the starting level, consistent with REINFORCE training on a small model without KL regularization (Figure~\ref{fig:p4-training-dynamics}a).
 The baseline (correctness only) peaks at step 124 (reward 0.641) then declines to 0.391 by the end of training, close to its starting value of 0.375.
-Separate A peaks earlier (step 39) but sustains a higher correctness component throughout training, ending at 0.422 vs.\ the baseline's 0.391.
-Separate B peaks at step 152 but its correctness component actually declines below the starting value by training end (0.348), suggesting the proximity reward may interfere with correctness optimization over long training horizons.
-Combined A+B peaks at step 39, matching Separate A's early peak timing, and ends with the highest correctness component (0.418).
+The + A run peaks earlier (step 39) but sustains a higher correctness component throughout training, ending at 0.422 vs.\ the baseline's 0.391.
+The + B run peaks at step 152 but its correctness component actually declines below the starting value by training end (0.348), suggesting the proximity reward may interfere with correctness optimization over long training horizons.
+A+B peaks at step 39, matching + A's early peak timing, and ends with the highest correctness component (0.418).
 
-\paragraph{Per-component rewards.}
-Figure~\ref{fig:p4-components} shows the individual reward components for the combined A+B run.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{component/figures/p4/fig_component_rewards.pdf}
-\caption{Per-component reward curves for the Combined A+B run. Correctness, format compliance, and numeric proximity are tracked separately.}
-\label{fig:p4-components}
-\end{figure}
-
-In the combined run, format compliance starts high (0.844) reflecting the SFT checkpoint's existing formatting ability, while correctness starts low (0.375).
+\textbf{Per-component rewards.}
+In the Comb.\ All run (Figure~\ref{fig:p4-training-dynamics}c), format compliance starts high (0.844) reflecting the SFT checkpoint's existing formatting ability, while correctness starts low (0.375).
 By training end, correctness improves to 0.418, format compliance decreases slightly to 0.715, and numeric proximity remains relatively stable (0.531 $\to$ 0.534).
 The stability of numeric proximity suggests it provides a consistent background signal rather than driving active optimization.
 
-\paragraph{Sequence length.}
-Figure~\ref{fig:p4-seq-length} shows mean response length trends.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{component/figures/p4/fig_seq_length.pdf}
-\caption{Mean sequence length over training steps for all four pre-P3 runs.}
-\label{fig:p4-seq-length}
-\end{figure}
-
-A notable divergence emerges: Separate A's sequence length increases from 216.5 to 276.6 tokens, while all other runs decrease (baseline: 216.5 $\to$ 148.3, Separate B: 216.5 $\to$ 150.1, Combined A+B: 216.5 $\to$ 154.6).
+\textbf{Sequence length.}
+A notable divergence emerges (Figure~\ref{fig:p4-training-dynamics}d): + A's sequence length increases from 216.5 to 276.6 tokens, while all other runs decrease (baseline: 216.5 $\to$ 148.3, + B: 216.5 $\to$ 150.1, A+B: 216.5 $\to$ 154.6).
 The format compliance reward appears to incentivize longer responses in isolation---likely because longer responses have more opportunities to include the \texttt{\#\#\#\#} marker.
 When combined with other rewards (A+B), this effect is suppressed, and the model follows the same shortening trend as the baseline.
 No runs exhibit sequence collapse (very short responses) or extreme length exploitation, indicating stable training behavior.

@@ -1,42 +1,15 @@
 Table~\ref{tab:p4-summary} presents headline metrics across all pre-P3 runs.
 
-\begin{table}[H]
-\centering
-\begin{tabular}{lrrrrr}
-\toprule
-\textbf{Run} & \textbf{Pass@1 (\%)} & \textbf{Pass@8 (\%)} & \textbf{Gap (\%)} & \textbf{Extr.\ Fail (\%)} & \textbf{$\Delta$Pass@1} \\
-\midrule
-Baseline        & 9.7  & 24.9 & \textbf{15.2} & 60.3          & ---  \\
-+ A (Format)    & \textbf{12.3} & \textbf{33.3} & 21.0 & \textbf{34.8} & +2.6 \\
-+ B (Proximity) & 10.4 & 26.5 & 16.1          & 53.5          & +0.7 \\
-A+B             & 11.9 & 30.3 & 18.3          & 39.6          & +2.2 \\
-\bottomrule
-\end{tabular}
-\caption{Summary of evaluation results (pre-P3 runs). Pass@1 and Pass@8 over 1319 GSM8K test problems (8 samples each). Gap = Pass@8 $-$ Pass@1. Extr.\ Fail = extraction failure rate. $\Delta$Pass@1 = pp change vs.\ Baseline. Best per column in \textbf{bold}.}
-\label{tab:p4-summary}
-\end{table}
+\input{component/figures/p4/t1_summary_pre}
 
-Reward A (format compliance) produces the strongest individual improvement, raising Pass@1 from 9.7\% to 12.3\% (+2.6pp) and cutting extraction failures from 60.3\% to 34.8\%.
-Reward B (numeric proximity) provides a smaller gain of +0.7pp, below the 1\% noise threshold established in our significance criteria.
-The combined A+B run achieves +2.2pp, slightly below A alone (+2.6pp), suggesting mild interference when rewards are combined.
+Reward A (format compliance) produces the strongest individual improvement, raising Pass@1 from \pFourBaselinePassOne\% to \pFourSeparateAPassOne\% (\pFourSeparateADeltaPassOne{}pp) and cutting extraction failures from \pFourBaselineExtrFail\% to \pFourSeparateAExtrFail\%.
+Reward B (numeric proximity) provides a smaller gain of \pFourSeparateBDeltaPassOne{}pp, below the 1\% noise threshold established in our significance criteria.
+The A+B run achieves \pFourCombinedAbDeltaPassOne{}pp, slightly below A alone (\pFourSeparateADeltaPassOne{}pp), suggesting mild interference when rewards are combined.
 
 Table~\ref{tab:p4-gained-lost} decomposes accuracy changes into per-problem gains and losses relative to the baseline.
 
-\begin{table}[H]
-\centering
-\begin{tabular}{lrrr}
-\toprule
-\textbf{Run} & \textbf{Gained} & \textbf{Lost} & \textbf{Net} \\
-\midrule
-+ A (Format)    & 79 & 45 & \textbf{34} \\
-+ B (Proximity) & 55 & 46 & 9  \\
-A+B             & 77 & 48 & \textbf{29} \\
-\bottomrule
-\end{tabular}
-\caption{Per-problem correctness changes vs.\ Baseline (pre-P3 runs). Net = Gained $-$ Lost.}
-\label{tab:p4-gained-lost}
-\end{table}
+\input{component/figures/p4/t2_gained_lost_pre}
 
-All runs show significant churn: even the best run (+A) loses 45 problems while gaining 79.
+All runs show significant churn: even the best run (+A) loses \pFourSeparateALost{} problems while gaining \pFourSeparateAGained.
 This indicates that reward additions do not monotonically improve---they shift which problems the model solves, not just how many.
-Reward B shows particularly high churn relative to its net gain (55 gained, 46 lost, net 9), suggesting it redistributes capability rather than adding it.
+Reward B shows particularly high churn relative to its net gain (\pFourSeparateBGained{} gained, \pFourSeparateBLost{} lost, net \pFourSeparateBNet), suggesting it redistributes capability rather than adding it.

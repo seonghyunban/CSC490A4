@@ -1,0 +1,18 @@
+\subsubsection{Reward E: Number Grounding}
+\nestindent
+
+\textbf{What it is.}
+E measures the fraction of numbers in the question that also appear in the response:
+\[
+R_E = \frac{|\text{numbers}_\text{response} \cap \text{numbers}_\text{question}|}{|\text{numbers}_\text{question}|}
+\]
+Numbers are extracted via regex ($\texttt{\textbackslash b\textbackslash d+\textbackslash .?\textbackslash d*\textbackslash b}$).
+A score of 1.0 means the response uses all numbers from the question in its reasoning; 0.0 means none appear.
+
+\textbf{Why we chose it.}
+To complement D in addressing the same 82.3\% reward hacking rate: E penalizes responses that ignore the question's numbers, ensuring the model uses the actual given values rather than producing plausible-looking arithmetic with unrelated numbers.
+E has universal coverage---every GSM8K question contains numbers, while $\sim$3--5\% lack proper nouns---making it a stronger necessary condition for correct problem-solving.
+
+Uesato et al.~\cite{uesato2022solving} demonstrate that verifying intermediate reasoning steps (including use of given values) improves RL training on math tasks.
+However, E has lower precision than D due to frequent number collisions---many problems use common values like 2, 3, 10---so a response about a different problem may accidentally contain matching numbers.
+\nestunindent

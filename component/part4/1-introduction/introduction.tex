@@ -1,6 +1,15 @@
-\subsection{Introduction}
+\subsection{Summary of Part 4}
+\nestindent
 
-\input{component/part4/1-introduction/pre-p3/content}
+Part 4 investigates whether additional reward functions improve RL fine-tuning on GSM8K.
+We design five auxiliary rewards grounded in literature and error analysis of Karpathy's original RL training script on our best Part 2 architecture as baseline, targeting format compliance, numeric proximity, surface non-degeneracy, entity grounding, and number grounding.
+We evaluate them through a ten-run ablation varying only reward composition, measuring Pass@1, Pass@8, extraction failure rate (fraction of responses lacking a parseable answer), and per-problem gains and losses relative to baseline.
+We analyse each run's individual accuracy impact, how rewards interact when combined (synergy vs.\ interference), whether they shift the distribution of failure modes, and how reward signals evolve over the course of training.
 
-% POST-P3: Update with C/D specifics and final combined run outcome.
-\input{component/part4/1-introduction/post-p3/content}
+Three of five rewards deliver on their design targets.
+Number grounding (E, \pFourSeparateEDeltaPassOne{}pp) and coherence (C, \pFourSeparateCDeltaPassOne{}pp) produce the strongest individual gains---both outperforming the format reward (A, \pFourSeparateADeltaPassOne{}pp) at fixing format, A's own target.
+The ranking of rewards by Pass@1 perfectly tracks how much each reduces extraction failure, making parseable output the unifying bottleneck.
+The full combination achieves \pFourCombinedAllDeltaPassOne{}pp (\pFourBaselinePassOne\% $\to$ \pFourCombinedAllPassOne\%), though all combinations are sub-additive---rewards converge on the same bottleneck through different paths.
+The remaining errors shift from format failures to reasoning failures, revealing a layered structure where most baseline format failures were reasoning errors all along.
+
+\nestunindent

@@ -1,64 +1,25 @@
-\paragraph{Mistake taxonomy.}
-We classify each failed problem's responses into one of six categories using rule-based heuristics applied to the raw model output.
-Problems where at least one of 8 samples is correct (pass8=True but pass1=False) are excluded from classification, as they represent consistency failures rather than knowledge gaps.
+We apply the mistake taxonomy from Table~\ref{tab:taxonomy} to all ten runs.
+Problems where at least one of 8 samples is correct (pass8=True but pass1=False) are excluded, as they represent consistency failures rather than knowledge gaps.
 
-\begin{table}[H]
-\centering
-\begin{tabular}{lp{9cm}}
-\toprule
-\textbf{Category} & \textbf{Rule} \\
-\midrule
-Gibberish       & Response length $< 20$ characters. \\
-No answer       & No \texttt{\#\#\#\# <number>} marker and no extractable numbers in the response. \\
-Format only     & Contains numbers but not in the expected \texttt{\#\#\#\# <number>} format. \\
-No reasoning    & Has \texttt{\#\#\#\#} marker but fewer than 2 non-answer lines and no calculator usage---the model jumped directly to an answer. \\
-Arithmetic error & Answer is close to gold (relative error $< 0.5$), with reasoning or calculator usage present. \\
-Wrong setup     & Answer is far from gold (relative error $\geq 0.5$), indicating incorrect operations or problem misinterpretation. \\
-\bottomrule
-\end{tabular}
-\caption{Rule-based mistake taxonomy. Categories are applied in order; the first matching rule determines the classification.}
-\label{tab:taxonomy}
-\end{table}
-
-\paragraph{Error distributions.}
+\textbf{Error distributions.}
 Table~\ref{tab:p4-errors} shows the distribution of mistake types across runs, counted over problems where all 8 samples failed (pass8=False).
 
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{lrrrrrr}
-\toprule
-\textbf{Run} & \textbf{No Ans.} & \textbf{Fmt Only} & \textbf{No Reas.} & \textbf{Arith.} & \textbf{Wrong Set.} & \textbf{Gibb.} \\
-\midrule
-Baseline & 318 (32.1\%) & 382 (38.6\%) & 0 & 108 (10.9\%) & 179 (18.1\%) & 3 (0.3\%) \\
-+ A (Format) & 163 (18.5\%) & 153 (17.4\%) & 0 & 168 (19.1\%) & 390 (44.3\%) & 6 (0.7\%) \\
-+ B (Prox.) & 278 (28.7\%) & 302 (31.1\%) & 0 & 137 (14.1\%) & 249 (25.7\%) & 3 (0.3\%) \\
-A+B & 205 (22.3\%) & 183 (19.9\%) & 0 & 178 (19.3\%) & 351 (38.1\%) & 3 (0.3\%) \\
-\bottomrule
-\end{tabular}
-\caption{Mistake type distribution for problems where all 8 samples failed (pre-P3 runs). Percentages are within each run's failed set.}
-\label{tab:p4-errors}
-\end{table}
+\input{component/figures/p4/t4_errors_pre}
 
-\paragraph{Distribution shifts.}
-Figure~\ref{fig:p4-error-dist} and Figure~\ref{fig:p4-error-delta} visualize the error distributions and their changes relative to baseline.
+\textbf{Distribution shifts.}
+Figure~\ref{fig:p4-error-dist} visualizes the error composition across runs.
 
-\begin{figure}[H]
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
 \centering
-\includegraphics[width=\textwidth]{component/figures/p4/fig_error_distribution.pdf}
-\caption{Error distribution across runs. Each bar shows the count of failed problems per mistake category.}
+\includegraphics[width=\linewidth]{component/figures/p4/fig4_error_distribution.pdf}
+\captionof{figure}{Error category composition (\%) across all runs. The shift from format-related failures (no answer, format only) toward reasoning failures (large error, arithmetic error) is visible across all reward additions.}
 \label{fig:p4-error-dist}
-\end{figure}
+\end{minipage}
+\vspace{1em}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{component/figures/p4/fig_error_delta.pdf}
-\caption{Change in error category distribution (percentage points) relative to Baseline.}
-\label{fig:p4-error-delta}
-\end{figure}
-
-The dominant pattern across all reward additions is a shift from format-related failures (no answer, format only) toward content-related failures (wrong setup, arithmetic error).
-Reward A produces the largest shift: ``no answer'' drops from 32.1\% to 18.5\% ($-$13.6pp) and ``format only'' drops from 38.6\% to 17.4\% ($-$21.2pp), while ``wrong setup'' rises from 18.1\% to 44.3\% (+26.2pp).
+The dominant pattern across all reward additions is a shift from format-related failures (no answer, format only) toward content-related failures (large error, arithmetic error).
+Reward A produces the largest shift: ``no answer'' drops from \pFourBaselineNoAnswer\% to \pFourSeparateANoAnswer\% ($-$13.1pp) and ``format only'' drops from \pFourBaselineFormatOnly\% to \pFourSeparateAFormatOnly\% ($-$21.9pp), while ``large error'' rises from \pFourBaselineLargeError\% to \pFourSeparateALargeError\% (+26.3pp).
 This is expected---format compliance reward teaches the model to produce parseable answers, converting previously unparseable responses into formatted-but-wrong ones.
 The shift reveals that many baseline ``format failures'' were masking underlying reasoning errors.
 

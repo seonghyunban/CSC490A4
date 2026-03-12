@@ -1,18 +1,18 @@
 For each additional reward, we assess four dimensions from its separate run compared to baseline: accuracy delta, error distribution shift, gained/lost problems, and expected vs.\ observed behavior.
 
-\paragraph{Reward A: Format Compliance.}
-Format compliance produces the strongest individual effect: +2.6pp Pass@1 (9.7\% $\to$ 12.3\%), exceeding our 2\% significance threshold.
-Pass@8 improves even more dramatically (24.9\% $\to$ 33.3\%, +8.4pp), indicating the model learns to solve more problems, not just format existing solutions.
-Extraction failures drop from 60.3\% to 34.8\%, confirming the reward's direct mechanism.
+\textbf{Reward A: Format Compliance.}
+Format compliance produces the strongest individual effect: \pFourSeparateADeltaPassOne{}pp Pass@1 (\pFourBaselinePassOne\% $\to$ \pFourSeparateAPassOne\%), exceeding our 2\% significance threshold.
+Pass@8 improves even more dramatically (\pFourBaselinePassEight\% $\to$ \pFourSeparateAPassEight\%, +8.3pp), indicating the model learns to solve more problems, not just format existing solutions.
+Extraction failures drop from \pFourBaselineExtrFail\% to \pFourSeparateAExtrFail\%, confirming the reward's direct mechanism.
 
-The error distribution shift is striking: ``no answer'' and ``format only'' categories together drop from 70.7\% to 35.9\% of failures, while ``wrong setup'' rises from 18.1\% to 44.3\%.
+The error distribution shift is striking: ``no answer'' and ``format only'' categories together drop from \pFourBaselineFmtFailPct\% to \pFourSeparateAFmtFailPct\% of failures, while ``large error'' rises from \pFourBaselineLargeError\% to \pFourSeparateALargeError\%.
 This reveals that the baseline's dominant failure mode was format-related: once the model learns to produce parseable answers, the remaining errors are predominantly reasoning failures.
-The net problem delta (+34, from 79 gained and 45 lost) shows that format compliance is not purely additive---45 previously correct problems regress, likely due to the additional reward signal perturbing the optimization landscape.
+The net problem delta (+\pFourSeparateANet, from \pFourSeparateAGained{} gained and \pFourSeparateALost{} lost) shows that format compliance is not purely additive---\pFourSeparateALost{} previously correct problems regress, likely due to the additional reward signal perturbing the optimization landscape.
 
-\paragraph{Reward B: Numeric Proximity.}
-Proximity reward provides a modest +0.7pp improvement (9.7\% $\to$ 10.4\%), below the 1\% noise threshold.
-At the individual problem level, 55 problems are gained while 46 are lost (net +9), showing high churn relative to net benefit.
-The extraction failure rate improves marginally (60.3\% $\to$ 53.5\%), which is unexpected since proximity reward does not directly target format---this may be an indirect effect of the graded signal encouraging the model to attempt numeric answers.
+\textbf{Reward B: Numeric Proximity.}
+Proximity reward provides a modest \pFourSeparateBDeltaPassOne{}pp improvement (\pFourBaselinePassOne\% $\to$ \pFourSeparateBPassOne\%), below the 1\% noise threshold.
+At the individual problem level, \pFourSeparateBGained{} problems are gained while \pFourSeparateBLost{} are lost (net \pFourSeparateBNet), showing high churn relative to net benefit.
+The extraction failure rate improves marginally (\pFourBaselineExtrFail\% $\to$ \pFourSeparateBExtrFail\%), which is unexpected since proximity reward does not directly target format---this may be an indirect effect of the graded signal encouraging the model to attempt numeric answers.
 
 The error distribution follows the same directional shift as Reward A but at smaller magnitude: format-related categories decrease while content-related categories increase.
 The relatively small effect suggests that proximity reward's graded signal provides less optimization pressure than the binary format reward, or that the model's primary bottleneck is format compliance rather than numeric accuracy.

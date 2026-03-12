@@ -1,0 +1,17 @@
+\subsubsection{Reward Interactions}
+\nestindent
+
+The five rewards form two interaction structures.
+
+\textbf{Answer extraction (A and B).}
+Both target getting a correct, parseable answer from the response.
+A produces a formatted number, giving B something to score proximity on; without A, B receives zero signal.
+A response without format gets $(R_A, R_B) = (0, 0)$; with format but wrong answer gets $(1, \text{partial})$; correct gets $(1, 1)$.
+Together, A and B provide non-zero signal for approximately 85\% of baseline failures.
+
+\textbf{Input-grounded anti-degeneracy (C $\to$ D, E).}
+All three fight different forms of degenerate output: C prevents text degeneracy (gibberish), D and E prevent reasoning degeneracy (solving the wrong problem).
+C must produce well-formed text before D and E have gradient to act on---C pushes the model from gibberish toward well-formed text, which unlocks D and E's ability to push from well-formed-but-wrong-problem toward well-formed-and-right-problem.
+Within this group, D and E provide complementary grounding signals adapted from entity-level factual consistency metrics in summarization~\cite{nan2021entity}: D checks entities (high precision, partial coverage---questions without proper nouns get no signal); E checks numbers (universal coverage, lower precision---number collisions).
+Together they check a necessary condition: a response that faithfully solves the given problem must reference both the entities and numbers from the question.
+\nestunindent

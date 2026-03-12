@@ -1,27 +1,19 @@
 \subsubsection{Reward B: Numeric Proximity}
+\nestindent
 
-\paragraph{Definition.}
-Numeric proximity provides continuous partial credit based on the distance between the model's predicted answer and the gold answer.
-If both are extractable as numbers:
+\textbf{What it is.}
+A continuous reward providing partial credit based on the distance between predicted and gold answers:
 \[
 R_B(\text{pred}, \text{gold}) = \max\!\left(0,\; 1 - \frac{|\text{pred} - \text{gold}|}{|\text{gold}| + 1}\right)
 \]
-If the response does not contain a parseable number, $R_B = 0.0$.
-The denominator $|\text{gold}| + 1$ normalizes the distance relative to the answer magnitude, and the $+1$ prevents division by zero when the gold answer is 0.
+If the response contains no parseable number, $R_B = 0.0$.
+The denominator $|\text{gold}| + 1$ normalizes distance relative to answer magnitude and prevents division by zero.
+A score of 0.95 means the prediction is within 5\% of gold (e.g., predicting 95 when gold is 100); 0.0 means either no answer was extracted or the prediction is far from gold.
 
-\paragraph{Rationale.}
-Approximately 74\% of SFT baseline responses produce a correctly formatted answer that is numerically wrong.
-Under binary correctness, all of these receive zero reward---a response off by 1 is treated identically to a response off by 10{,}000.
-Numeric proximity provides graded signal proportional to how close the model's answer is, creating advantage variance among the 16 sampled responses even when none are exactly correct.
-This is especially important for problems where the model consistently approaches the correct answer but makes small arithmetic errors.
+\textbf{Why we chose it.}
+To address the 8.5\% near-miss rate identified in Section~1.2: under binary correctness, a response off by 1 is treated identically to one off by 10{,}000.
+Proximity provides graded signal proportional to closeness, creating advantage variance among the 16 samples even when none are exactly correct.
 
-\paragraph{Literature.}
-The use of distance-based partial credit in reward shaping is grounded in the potential-based reward shaping framework of Ng et al.\ (1999), which shows that shaped rewards preserve optimal policies under certain conditions.
-Unsloth's RL documentation recommends proximity-based rewards for math tasks to improve training stability when exact-match rates are low.
-
-\paragraph{Complementarity with Reward A.}
-Rewards A and B target non-overlapping failure populations.
-A addresses the \textasciitilde11\% of responses lacking any parseable format---these receive $R_B = 0.0$ by definition since no number can be extracted.
-B addresses the \textasciitilde74\% with correct format but wrong answer---these already satisfy $R_A = 1.0$.
-There is no conflict: a response without format gets $(R_A, R_B) = (0, 0)$; a response with format but wrong answer gets $(1, \text{partial})$; a correct response gets $(1, 1)$.
-Together, A and B provide non-zero signal for approximately 85\% of baseline failures.
+Distance-based partial credit is grounded in the reward shaping framework of Ng et al.~\cite{ng1999reward}.
+Unsloth's RL documentation~\cite{unsloth} recommends proximity-based rewards for math tasks when exact-match rates are low.
+\nestunindent

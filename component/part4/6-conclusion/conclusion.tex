@@ -1,5 +1,19 @@
 \subsection{Conclusion}
+\nestindent
 
-\input{component/part4/6-conclusion/pre-p3/content}
+Three of five rewards delivered on their design targets, but the strongest individual gains came not from the format reward A but from the coherence reward C (\pFourSeparateCDeltaPassOne{}pp) and the number-grounding reward E (\pFourSeparateEDeltaPassOne{}pp).
+The common mechanism is extraction failure: the ranking of rewards by Pass@1 perfectly tracks how much each reduces unparseable output.
+C and E improve text quality, and format compliance follows naturally---fixing the cause fixes the symptom.
+The training dynamics confirm this: C's continuous signal sustains learning where A's binary signal saturates, explaining why C outperforms A despite targeting a smaller EDA problem.
 
-\input{component/part4/6-conclusion/post-p3/content}
+Combinations are universally sub-additive, retaining 60--67\% of expected improvement in pairs and 37\% in triples.
+The sub-additivity comes from overlapping target populations, not optimization interference---all five components coexist at healthy levels in the full combination.
+Only combining across functional groups (grounding with format) produces a net gain on Pass@1; within-group combinations overlap or interfere.
+The grounding rewards broaden the set of solvable problems while the format signal converts that breadth into consistent first-attempt answers.
+
+Every reward shifts errors from format failures toward reasoning failures, revealing a layered structure: most baseline format failures were reasoning errors all along.
+What remains is dominated by large error---wrong calculations, not arithmetic mistakes.
+The format failure floor at approximately 130 problems, reached independently by E and the full combination, marks the ceiling of surface-level rewards.
+Further accuracy gains require rewards that verify reasoning steps, not output form.
+
+\nestunindent

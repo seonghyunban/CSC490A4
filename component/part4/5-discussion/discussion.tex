@@ -1,7 +1,100 @@
 \subsection{Discussion}
+\nestindent
 
-We analyze the results at three levels: the isolated impact of each reward from separate runs, interaction effects observed in the combined run, and limitations of our approach.
+We interpret the observations from Section~\ref{sec:results} along the same four dimensions, connecting patterns to their underlying mechanisms.
 
-\input{component/part4/5-discussion/a-per-reward-impact/per-reward-impact}
-\input{component/part4/5-discussion/b-reward-interactions/reward-interactions}
-\input{component/part4/5-discussion/c-limitations/limitations}
+\subsubsection{Individual Impact}
+\nestindent
+
+A targeted unparseable output and delivered, dropping extraction failure from \pFourBaselineExtrFail\% to \pFourSeparateAExtrFail\%.
+B targeted near-misses and failed at \pFourSeparateBDeltaPassOne{}pp, below noise.
+C targeted degeneration and delivered \pFourSeparateCDeltaPassOne{}pp, the second strongest individual reward.
+D and E both targeted reward hacking, but E (\pFourSeparateEDeltaPassOne{}pp) substantially outperformed D (\pFourSeparateDDeltaPassOne{}pp).
+Three of five rewards fixed what they were designed to fix.
+The surprise is that C and E also fixed something they weren't designed to fix, format, and did it better than A, the format reward itself.
+
+The ranking of rewards by Pass@1 improvement perfectly tracks how much each reduces extraction failure---not the size of the EDA problem it targets.
+Getting responses from unscorable to scorable is what converts into accuracy under REINFORCE: without a parseable answer, no reward signal flows.
+A teaches the model to produce the \texttt{\#\#\#\#} marker---a surface fix that leaves underlying text quality unchanged.
+C and E push toward fundamentally better text: coherent reasoning (C) or calculations using the question's actual numbers (E).
+Good text naturally ends with a parseable answer; fixing the cause fixes the symptom.
+
+C's effectiveness is revealing.
+The EDA identified 32.8\% degenerate text, but the taxonomy classifies only 3.2\% of failures as gibberish---C's anti-gibberish component addresses a small slice.
+The bulk of its impact comes from pro-coherence: rewarding sentence structure, arithmetic expressions, and math vocabulary across all responses.
+
+B fails for a structural reason: it returns zero when no number is parseable.
+With 60\% of responses unparseable, B is blind to the majority---delivering the same zero signal as the binary correctness reward it was meant to improve.
+
+E outperforms D despite both targeting reward hacking.
+The reward design anticipated this tension: E has broader coverage (every question has numbers) but lower precision (common values collide).
+Coverage won---but the gap reflects something deeper.
+Using the question's numbers forces mathematical engagement with those values; mentioning the question's names imposes no constraint on the reasoning.
+
+\nestunindent
+\subsubsection{Interaction Effects}
+\nestindent
+
+A+B interferes, underperforming A alone.
+C+D does not improve on C alone.
+C+D+E falls below E alone on Pass@1 but achieves the highest Pass@8.
+Only the full combination exceeds its best individual component on Pass@1.
+Combinations within the same functional group overlap or interfere, and only combining across groups, grounding with format, produces a net gain on first-attempt accuracy.
+
+Grounding rewards (C, D, E) raise Pass@8 when stacked---C+D+E achieves the highest of any configuration (\pFourCombinedCdePassEight\%)---while being redundant on Pass@1.
+They push toward the same underlying improvement, so combining them broadens the set of solvable problems across multiple samples without helping first-attempt reliability.
+Adding A+B to the grounding stack raises Pass@1 (\pFourCombinedCdePassOne\% $\to$ \pFourCombinedAllPassOne\%) but lowers Pass@8 (\pFourCombinedCdePassEight\% $\to$ \pFourCombinedAllPassEight\%) and, counterintuitively, worsens extraction failure (\pFourCombinedCdeExtrFail\% $\to$ \pFourCombinedAllExtrFail\%).
+The binary format signal constrains the model toward reliably producing \texttt{\#\#\#\#}, narrowing the solution diversity that the grounding stack encourages.
+The grounding rewards need the format signal to convert broader knowledge into consistent answers, and the format reward needs the grounding rewards to ensure those answers engage with the actual problem.
+
+Sub-additivity accelerates with reward count: pairs retain 60--67\% of expected improvement, triples 37\%.
+All effective rewards improve accuracy primarily by reducing extraction failure---they converge on the same bottleneck through different paths, so each additional reward contributes less at the margin.
+
+Losses hold constant at \pFourLossMin--\pFourLossMax{} problems regardless of configuration.
+Net improvement comes from reaching additional solvable problems, not from protecting existing solutions.
+
+\nestunindent
+\subsubsection{Failure Mode Distribution}
+\nestindent
+
+Every reward shifts errors from format failures toward reasoning failures.
+A, C, and E produce the largest shifts.
+B and D produce smaller ones.
+The direction is universal and no reward shifts errors the other way.
+
+This shift is not a side effect---it reveals the layered structure of the failure modes.
+The taxonomy checks format before reasoning, so a response that is both unparseable and logically wrong is classified as a format failure.
+When rewards fix the format, the same response is reclassified as a reasoning error.
+The absolute count of reasoning failures rises from 296 (baseline) to 712 (full combination) because the rewards are uncovering errors that were always there.
+Of the baseline's $\sim$662 format failures, only $\sim$140 become solvable once format is fixed.
+The rest were reasoning failures all along.
+
+What remains is dominated by large error---the model sets up the wrong calculation entirely, not arithmetic mistakes on the right one.
+In the strongest configurations, large error accounts for 55--62\% of remaining failures.
+Grounding rewards teach the model to include the question's numbers, but not to use them correctly.
+The ratio of arithmetic to large error stays roughly constant across all runs: the rewards peel away the format layer uniformly without selectively reaching either type of reasoning failure underneath.
+E and the full combination converge to the same format failure floor ($\sim$130 problems) despite different reward compositions---further accuracy gains require rewards that verify reasoning steps, not output surface.
+
+\nestunindent
+\subsubsection{Training Dynamics}
+\nestindent
+
+A and D peak early and decline.
+C peaks late (step 785) and sustains the highest individual correctness at training end (0.473 vs.\ baseline's 0.391).
+B degrades below its starting value.
+In the full combination, all five components coexist at healthy levels (0.619--0.907) without collapsing.
+The sub-additivity observed in final accuracy comes from fixing the same problems, not from interfering with each other's optimization.
+
+Reward shape matters as much as reward target.
+Once A and D teach the model the pattern they check for, their gradient saturates and the learning signal fades.
+C's continuous pro-coherence signal always has room to improve---a continuous signal that sustains learning outperforms a binary signal that fades, which is why C outperforms A on Pass@1 despite targeting a smaller EDA problem.
+
+B's training trajectory reveals a deeper problem than its structural blindness.
+Its correctness component declines \emph{below} the starting value by training end (0.348 vs.\ $\sim$0.375).
+The proximity gradient does not just fail to help---over long training, rewarding ``close'' answers actively pulls the model away from exact correctness.
+
+A alone exploits sequence length (216 $\to$ 277 tokens); in every combination, other signals suppress this.
+The rewards act as mutual constraints---each prevents the others from gaming the optimization---a benefit that does not show up in Pass@1 but keeps the training trajectory healthy.
+
+\nestunindent
+\nestunindent

@@ -1,0 +1,57 @@
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\small
+\textbf{Post-training metrics} \quad\textit{(computed on all 1319 GSM8K test problems, 8 samples each)}
+\vspace{0.5em}
+
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l >{\raggedright\arraybackslash}p{0.55\linewidth}}
+\toprule
+\textbf{Metric} & \textbf{Definition} \\
+\midrule
+Pass@1 & \% of problems solved on the first attempt \\
+Pass@8 & \% of problems solved at least once in 8 attempts \\
+Pass@8--Pass@1 gap & Capability minus reliability; large = inconsistent \\
+Extraction failure rate & Fraction lacking parseable \texttt{\#\#\#\# <number>} \\
+Net problem delta & Problems gained minus lost vs.\ baseline \\
+\bottomrule
+\end{tabular*}
+\end{minipage}
+\vspace{1em}
+
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\small
+\textbf{Training-time metrics} \quad\textit{(logged to W\&B at every step)}
+\vspace{0.5em}
+
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l >{\raggedright\arraybackslash}p{0.55\linewidth}}
+\toprule
+\textbf{Metric} & \textbf{Definition} \\
+\midrule
+Mean reward & Total reward averaged across samples per step \\
+Per-component reward & Individual reward function values per step \\
+Mean sequence length & Average response length in tokens per step \\
+\bottomrule
+\end{tabular*}
+\end{minipage}
+\vspace{1em}
+
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\small
+\textbf{Error taxonomy}
+\vspace{0.5em}
+
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l >{\raggedright\arraybackslash}p{0.55\linewidth}}
+\toprule
+\textbf{Metric} & \textbf{Definition} \\
+\midrule
+Per-category error rate & \% of failures in each of six categories (Table~\ref{tab:taxonomy}) \\
+\bottomrule
+\end{tabular*}
+\addtocounter{table}{1}
+\end{minipage}
+\vspace{1em}

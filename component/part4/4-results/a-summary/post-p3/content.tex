@@ -1,57 +1,23 @@
 Table~\ref{tab:p4-summary-full} extends the summary to all ten runs.
 
-\begin{table}[H]
+\input{component/figures/p4/t1_summary}
+
+Number grounding (E) is the strongest individual reward (\pFourSeparateEDeltaPassOne{}pp), surpassing non-degeneracy (C, \pFourSeparateCDeltaPassOne{}pp) and format compliance (A, \pFourSeparateADeltaPassOne{}pp).
+The Comb.\ All run achieves the highest Pass@1 at \pFourCombinedAllPassOne\% (\pFourCombinedAllDeltaPassOne{}pp over baseline), while C+D+E achieves the highest Pass@8 (\pFourCombinedCdePassEight\%) and lowest extraction failure rate (\pFourCombinedCdeExtrFail\%).
+Figure~\ref{fig:p4-individual-impact} visualizes the Pass@1 ranking and per-problem gains and losses across all configurations.
+
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
 \centering
-\begin{tabular}{lrrrrr}
-\toprule
-\textbf{Run} & \textbf{Pass@1 (\%)} & \textbf{Pass@8 (\%)} & \textbf{Gap (\%)} & \textbf{Extr.\ Fail (\%)} & \textbf{$\Delta$Pass@1} \\
-\midrule
-Baseline        & 9.7  & 24.9 & 15.2 & 60.3          & ---  \\
-\midrule
-+ A (Format)    & 12.3 & 33.3 & 21.0 & 34.8          & +2.6 \\
-+ B (Proximity) & 10.4 & 26.5 & 16.1 & 53.5          & +0.7 \\
-A+B             & 11.9 & 30.3 & 18.3 & 39.6          & +2.2 \\
-\midrule
-+ C (Coherence) & 12.9 & 36.2 & 23.4 & 25.3          & +3.2 \\
-+ D (Entity)    & 11.8 & 30.4 & 18.7 & 44.5          & +2.0 \\
-+ E (Number)    & 13.8 & 37.2 & 23.4 & 22.7          & +4.1 \\
-C+D             & 12.8 & 37.8 & 24.9 & 22.8          & +3.1 \\
-C+D+E           & 13.1 & \textbf{39.1} & \textbf{26.0} & \textbf{15.9} & +3.4 \\
-\midrule
-Combined All    & \textbf{14.6} & 35.6 & 21.0 & 20.0 & \textbf{+4.9} \\
-\bottomrule
-\end{tabular}
-\caption{Summary of evaluation results across all ten runs. Best per column in \textbf{bold}.}
-\label{tab:p4-summary-full}
-\end{table}
+\includegraphics[width=\linewidth]{component/figures/p4/fig2_individual_impact.pdf}
+\captionof{figure}{Individual impact of each reward configuration. (a)~Pass@1 ranking; dashed line marks the baseline. (b)~Problems gained (green) and lost (red) vs.\ Baseline; shaded band marks the \pFourLossMin--\pFourLossMax{} loss stability range.}
+\label{fig:p4-individual-impact}
+\end{minipage}
+\vspace{1em}
 
-Number grounding (E) is the strongest individual reward (+4.1pp), surpassing coherence (C, +3.2pp) and format compliance (A, +2.6pp).
-The combined all run achieves the highest Pass@1 at 14.6\% (+4.9pp over baseline), while C+D+E achieves the highest Pass@8 (39.1\%) and lowest extraction failure rate (15.9\%).
-The gap between C+D+E's Pass@8 (39.1\%) and its Pass@1 (13.1\%) is the widest of any configuration (26.0pp), indicating the grounding rewards teach the model to solve many problems but not yet reliably.
+\input{component/figures/p4/t2_gained_lost}
 
-\begin{table}[H]
-\centering
-\begin{tabular}{lrrr}
-\toprule
-\textbf{Run} & \textbf{Gained} & \textbf{Lost} & \textbf{Net} \\
-\midrule
-+ A (Format)    & 79  & 45 & 34 \\
-+ B (Proximity) & 55  & 46 & 9  \\
-A+B             & 77  & 48 & 29 \\
-\midrule
-+ C (Coherence) & 91  & 49 & 42 \\
-+ D (Entity)    & 76  & 49 & 27 \\
-+ E (Number)    & 98  & 44 & 54 \\
-C+D             & 96  & 55 & 41 \\
-C+D+E           & 96  & 51 & 45 \\
-\midrule
-Combined All    & 113 & 49 & \textbf{64} \\
-\bottomrule
-\end{tabular}
-\caption{Per-problem correctness changes vs.\ Baseline across all ten runs.}
-\label{tab:p4-gained-lost-full}
-\end{table}
-
-Reward E gains 98 problems with the fewest losses of any individual reward (44), yielding the highest individual net (+54).
-The combined all run gains 113 problems while losing only 49 (net +64), more than any other configuration.
-The loss count remains stable across all configurations (44--55), reinforcing the observation that a fixed population of problems becomes harder under any reward perturbation.
+Reward E gains \pFourSeparateEGained{} problems with the fewest losses of any individual reward (\pFourSeparateELost), yielding the highest individual net (+\pFourSeparateENet).
+The Comb.\ All run gains \pFourCombinedAllGained{} problems while losing only \pFourCombinedAllLost{} (net +\pFourCombinedAllNet), more than any other configuration.
+The gap between C+D+E's Pass@8 (\pFourCombinedCdePassEight\%) and its Pass@1 (\pFourCombinedCdePassOne\%) is the widest of any configuration (\pFourCombinedCdeGap{}pp), indicating the grounding rewards teach the model to solve many problems but not yet reliably.
+The loss count remains stable across all configurations (\pFourLossMin--\pFourLossMax), reinforcing the observation that a fixed population of problems becomes harder under any reward perturbation.

@@ -1,7 +1,104 @@
 \subsection{Results}
+\label{sec:results}
+\nestindent
 
-We present results in three parts: a summary table comparing headline metrics across all six runs, an error analysis using our rule-based mistake taxonomy, and an examination of training dynamics from W\&B logs.
+We report observations from the ten-run ablation study along the four dimensions defined in Section~\ref{sec:dimensions}: individual impact, interaction effects, failure mode distribution, and training dynamics.
+Each subsection presents the relevant evidence and marks notable patterns for interpretation in the Discussion.
 
-\input{component/part4/4-results/a-summary/summary}
-\input{component/part4/4-results/b-error-analysis/error-analysis}
-\input{component/part4/4-results/c-training-dynamics/training-dynamics}
+\subsubsection{Individual Impact}
+\nestindent
+
+We compare each single-reward run against the baseline on Pass@1, Pass@8, extraction failure rate, and per-problem gains/losses.
+Table~\ref{tab:p4-summary-full} presents headline metrics across all ten runs (best per column in \textbf{bold}), and Figure~\ref{fig:p4-individual-impact} visualizes the ranking and per-problem changes.
+
+\input{component/figures/p4/t1_summary}
+
+Table~\ref{tab:p4-gained-lost-full} decomposes accuracy changes into per-problem gains and losses vs.\ Baseline across all ten runs.
+
+\input{component/figures/p4/t2_gained_lost}
+
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{component/figures/p4/fig2_individual_impact.pdf}
+\captionof{figure}{Individual impact of each reward configuration. (a)~Pass@1 ranking; dashed line marks the baseline. (b)~Problems gained (green) and lost (red) vs.\ Baseline; shaded band marks the \pFourLossMin--\pFourLossMax{} loss stability range.}
+\label{fig:p4-individual-impact}
+\end{minipage}
+\vspace{1em}
+
+Number grounding (E) is the strongest individual reward at \pFourSeparateEDeltaPassOne{}pp, followed by non-degeneracy (C, \pFourSeparateCDeltaPassOne{}pp) and format compliance (A, \pFourSeparateADeltaPassOne{}pp); numeric proximity (B) provides only \pFourSeparateBDeltaPassOne{}pp, below our 1\% noise threshold.
+E also gains the most problems (\pFourSeparateEGained) with the fewest individual losses (\pFourSeparateELost), yielding the highest individual net (+\pFourSeparateENet).
+The full combination achieves the highest Pass@1 (\pFourCombinedAllPassOne\%, \pFourCombinedAllDeltaPassOne{}pp), while C+D+E achieves the highest Pass@8 (\pFourCombinedCdePassEight\%) and lowest extraction failure rate (\pFourCombinedCdeExtrFail\%)---though with the widest Pass@8--Pass@1 gap (\pFourCombinedCdeGap{}pp), indicating breadth without consistency.
+Across all ten configurations, the loss count remains remarkably stable at \pFourLossMin--\pFourLossMax{} problems.
+
+\nestunindent
+\subsubsection{Interaction Effects}
+\nestindent
+
+We compare combined runs against their constituent individual rewards to assess synergy, interference, or additivity.
+Figure~\ref{fig:p4-interactions} visualizes the interaction patterns.
+
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{component/figures/p4/fig3_interactions.pdf}
+\captionof{figure}{Reward interaction patterns. (a)~Expected (sum of components) vs.\ actual $\Delta$Pass@1 for each combined run. (b)~$\Delta$ vs.\ best individual component on Pass@1 and Pass@8.}
+\label{fig:p4-interactions}
+\end{minipage}
+\vspace{1em}
+
+A+B (\pFourCombinedAbDeltaPassOne{}pp) underperforms A alone (\pFourSeparateADeltaPassOne{}pp) by 0.4pp, indicating mild interference rather than synergy.
+All combined runs are sub-additive: the actual improvement is always less than the sum of individual components.
+C+D+E shows the widest gap between expected and actual improvement, yet still achieves the highest Pass@8 of any configuration (\pFourCombinedCdePassEight\%).
+The number of gained problems increases with reward count---individual runs gain 55--98 problems, pairs 77--96, and the full combination gains \pFourCombinedAllGained---while losses stay fixed at \pFourLossMin--\pFourLossMax.
+Each additional reward unlocks a few extra problems the others miss, so net improvement grows with reward count even though individual contributions overlap.
+Despite this sub-additivity, the full combination (\pFourCombinedAllDeltaPassOne{}pp) substantially exceeds any individual reward or pair.
+
+\nestunindent
+\subsubsection{Failure Mode Distribution}
+\nestindent
+
+We apply the rule-based mistake taxonomy (Table~\ref{tab:taxonomy}) to classify errors across all ten runs.
+Table~\ref{tab:p4-errors-full} shows the distribution, and Figure~\ref{fig:p4-error-dist} visualizes the composition shift.
+
+\input{component/figures/p4/t4_errors_post}
+
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{component/figures/p4/fig4_error_distribution.pdf}
+\captionof{figure}{Error category composition (\%) across all runs. The shift from format-related failures (no answer, format only) toward reasoning failures (large error, arithmetic error) is visible across all reward additions.}
+\label{fig:p4-error-dist}
+\end{minipage}
+\vspace{1em}
+
+The baseline's errors are dominated by format failures: ``no answer'' (\pFourBaselineNoAnswer\%) and ``format only'' (\pFourBaselineFormatOnly\%) together account for \pFourBaselineFmtFailPct\%.
+Every reward addition shifts this distribution toward reasoning failures (large error, arithmetic error).
+Format compliance (A) produces the largest single-reward format reduction (``no answer'' $-$13.1pp, ``format only'' $-$21.9pp), but number grounding (E) achieves comparable or greater reduction---``no answer'' drops to \pFourSeparateENoAnswer\% ($-$21.2pp), ``format only'' to \pFourSeparateEFormatOnly\% ($-$30.0pp)---despite not directly targeting format.
+C+D+E nearly eliminates surface-level failures (zero gibberish, lowest format rates at \pFourCombinedCdeNoAnswer\% + \pFourCombinedCdeFormatOnly\%), leaving ``large error'' as the dominant error at \pFourCombinedCdeLargeError\%.
+In the full combination, reasoning failures rise to dominate at \pFourCombinedAllReasonPct\%, while format failures shrink to \pFourCombinedAllFmtFailPct\%.
+
+\nestunindent
+\subsubsection{Training Dynamics}
+\nestindent
+
+We examine per-step training signals logged to W\&B across all 10 runs.
+Figure~\ref{fig:p4-training-dynamics} shows mean reward, Pass@1, per-component rewards, and sequence length.
+
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{component/figures/p4/fig5_training_dynamics.pdf}
+\captionof{figure}{Training dynamics across all 10 runs. (a)~Mean total reward per step. (b)~Pass@1 over training. (c)~Per-component reward curves for the Comb.\ All run. (d)~Mean sequence length over training.}
+\label{fig:p4-training-dynamics}
+\end{minipage}
+\vspace{1em}
+
+All runs exhibit a sharp initial reward improvement followed by decline, consistent with REINFORCE without KL regularization.
+Non-degeneracy (C) is the exception in shape: it peaks late (step 785) with the highest individual correctness at training end (0.473 vs.\ baseline's 0.391), unlike the early-peak-then-decline pattern of format compliance (A) and entity grounding (D).
+Proximity (B) is the exception in direction: its correctness component declines below its starting value by training end (0.348).
+Format compliance (A) increases sequence length from 216.5 to 276.6 tokens, while all other individual runs decrease; this effect disappears in combinations (A+B: 216.5 $\to$ 154.6).
+In the full combination, all five reward components maintain healthy levels at training end (non-degeneracy 0.907, entity grounding 0.830, number grounding 0.874, format 0.867, proximity 0.619) with no single component collapsing, and it ends with the highest correctness (0.461) of any run.
+
+\nestunindent
+\nestunindent

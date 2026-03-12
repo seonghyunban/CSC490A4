@@ -1,4 +1,4 @@
 Exploratory data analysis of the baseline RL outputs reveals that 82\% of ``correct'' responses solve a completely different GSM8K problem that coincidentally produces the matching number---a form of reward hacking.
-Reward C (coherence) addresses the 32\% of responses that degenerate into gibberish, serving as a lightweight proxy for the KL penalty absent from our REINFORCE setup.
+Reward C (surface non-degeneracy) addresses the 32\% of responses that degenerate into gibberish, serving as a lightweight proxy for the KL penalty absent from our REINFORCE setup.
 Rewards D (entity grounding) and E (number grounding) penalize responses that do not reference the question's entities and numbers, directly targeting the reward hacking vulnerability.
-Number grounding (E) proves the strongest individual reward (+4.1pp), while the combined run with all five additional rewards achieves +4.9pp Pass@1 over baseline.
+Number grounding (E) proves the strongest individual reward (+4.1pp), while the Comb.\ All run (all five additional rewards) achieves +4.9pp Pass@1 over baseline.

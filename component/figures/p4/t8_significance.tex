@@ -1,0 +1,25 @@
+\vspace{1em}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\small
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
+\toprule
+\textbf{Signal} & \textbf{Threshold} & \textbf{Interpretation} \\
+\midrule
+Accuracy difference & $< 1\%$ & Noise \\
+                    & $1$--$2\%$ & Marginal, reported with caveat \\
+                    & $> 2\%$ & Likely meaningful \\
+\midrule
+Error category shift & $> 5$pp & Meaningful structural change \\
+                     & Top-3 rank change & Meaningful shift in failure profile \\
+\midrule
+Pass@8--Pass@1 gap & Narrowing & Improved consistency \\
+                   & Widening & Expanded capability without reliability \\
+\midrule
+Training curves & Sustained trend & Informative \\
+                & Single-step spike & Noise \\
+\bottomrule
+\end{tabular*}
+\addtocounter{table}{1}
+\end{minipage}
+\vspace{1em}

@@ -33,6 +33,7 @@
 \usepackage{fancyhdr}
 \usepackage{amsfonts}
 \usepackage{siunitx}
+\usepackage{makecell}
 
 \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
 \setlength{\parindent}{0pt}
@@ -42,7 +43,7 @@
 
 
 % Page geometry
-\geometry{margin=1in}
+\geometry{margin=0.8in}
 
 % Hyperlink setup
 \hypersetup{
@@ -52,9 +53,34 @@
     citecolor=blue
 }
 
-% Title formatting
-\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
-\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+% Title formatting (hang shape: multi-line titles wrap aligned with title text)
+\titleformat{\section}[hang]{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}[hang]{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}[hang]{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\titlespacing*{\section}{0pt}{*3}{*1.5}
+\titlespacing*{\subsection}{0pt}{*2}{*1}
+\titlespacing*{\subsubsection}{0pt}{*1.5}{*0.5}
+
+% Nested indentation: shift left margin for all content (text, lists, figures)
+% Dynamically computes indent to align body text with heading title start
+\usepackage{changepage}
+\usepackage{calc}
+\newlength{\nestindentamt}
+\newlength{\floatwidth}
+\makeatletter
+\newcommand{\nestindent}{%
+  \ifnum\value{subsubsection}>0
+    \settowidth{\nestindentamt}{{\normalsize\bfseries\thesubsubsection\hspace{1em}}}%
+  \else\ifnum\value{subsection}>0
+    \settowidth{\nestindentamt}{{\normalsize\bfseries\thesubsection\hspace{1em}}}%
+  \else
+    \settowidth{\nestindentamt}{{\large\bfseries\thesection\hspace{1em}}}%
+  \fi\fi
+  \begin{adjustwidth}{\nestindentamt}{0pt}%
+}
+\makeatother
+\newcommand{\nestunindent}{\end{adjustwidth}}
 \setcounter{tocdepth}{2}
 
 % Document info
@@ -71,7 +97,7 @@
 
 \maketitle
 
-\input{component/intro}
+% \input{component/intro}
 
 \newpage
 \input{component/part1}

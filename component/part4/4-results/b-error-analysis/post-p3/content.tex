@@ -1,33 +1,9 @@
 Table~\ref{tab:p4-errors-full} extends the error distribution to all ten runs.
 
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{lrrrrrr}
-\toprule
-\textbf{Run} & \textbf{No Ans.} & \textbf{Fmt Only} & \textbf{No Reas.} & \textbf{Arith.} & \textbf{Wrong Set.} & \textbf{Gibb.} \\
-\midrule
-Baseline & 318 (32.1\%) & 382 (38.6\%) & 0 & 108 (10.9\%) & 179 (18.1\%) & 3 (0.3\%) \\
-\midrule
-+ A & 163 (18.5\%) & 153 (17.4\%) & 0 & 168 (19.1\%) & 390 (44.3\%) & 6 (0.7\%) \\
-+ B & 278 (28.7\%) & 302 (31.1\%) & 0 & 137 (14.1\%) & 249 (25.7\%) & 3 (0.3\%) \\
-A+B & 205 (22.3\%) & 183 (19.9\%) & 0 & 178 (19.3\%) & 351 (38.1\%) & 3 (0.3\%) \\
-\midrule
-+ C & 89 (7.7\%) & 97 (8.4\%) & 0 & 216 (18.8\%) & 437 (38.0\%) & 2 (0.2\%) \\
-+ D & 211 (18.1\%) & 237 (20.4\%) & 0 & 158 (13.6\%) & 311 (26.7\%) & 1 (0.1\%) \\
-+ E & 63 (5.5\%) & 76 (6.7\%) & 0 & 239 (21.0\%) & 448 (39.4\%) & 2 (0.2\%) \\
-C+D & 87 (7.6\%) & 74 (6.4\%) & 0 & 204 (17.7\%) & 453 (39.4\%) & 3 (0.3\%) \\
-C+D+E & 41 (3.6\%) & 49 (4.3\%) & 0 & 220 (19.2\%) & 493 (43.0\%) & 0 \\
-\midrule
-Comb.\ All & 89 (7.9\%) & 54 (4.8\%) & 0 & 239 (21.2\%) & 466 (41.3\%) & 2 (0.2\%) \\
-\bottomrule
-\end{tabular}
-\caption{Mistake type distribution across all ten runs. Percentages are within each run's failed set (problems where all 8 samples failed).}
-\label{tab:p4-errors-full}
-\end{table}
+\input{component/figures/p4/t4_errors_post}
 
-Number grounding (E) produces the most extreme format-failure reduction of any individual reward: ``no answer'' drops to 5.5\% ($-$26.6pp from baseline) and ``format only'' to 6.7\% ($-$31.9pp).
-This surpasses even coherence (C), suggesting that number grounding's signal---rewarding responses that use the question's numbers---implicitly encourages structured mathematical responses that include parseable answers.
+Number grounding (E) produces the most extreme format-failure reduction of any individual reward: ``no answer'' drops to \pFourSeparateENoAnswer\% ($-$21.2pp from baseline) and ``format only'' to \pFourSeparateEFormatOnly\% ($-$30.0pp).
+This surpasses even non-degeneracy (C), suggesting that number grounding's signal---rewarding responses that use the question's numbers---implicitly encourages structured mathematical responses that include parseable answers.
 
-The C+D+E combination achieves the lowest format-failure rates of any configuration: 3.6\% ``no answer'' and 4.3\% ``format only'', with zero gibberish.
-Its dominant failure mode is ``wrong setup'' at 43.0\%, the highest of any configuration, indicating that the grounding reward stack nearly eliminates surface-level failures, leaving only fundamental reasoning errors.
+The C+D+E combination achieves the lowest format-failure rates of any configuration: \pFourCombinedCdeNoAnswer\% ``no answer'' and \pFourCombinedCdeFormatOnly\% ``format only'', with zero gibberish.
+Its dominant failure mode is ``large error'' at \pFourCombinedCdeLargeError\%, the highest of any configuration, indicating that the grounding reward stack nearly eliminates surface-level failures, leaving only fundamental reasoning errors.

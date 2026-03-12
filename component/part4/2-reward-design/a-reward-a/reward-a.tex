@@ -1,8 +1,8 @@
 \subsubsection{Reward A: Format Compliance}
+\nestindent
 
-\paragraph{Definition.}
-Format compliance is a binary reward that returns 1.0 if the model's response contains a parseable answer in the expected \texttt{\#\#\#\# <number>} format, and 0.0 otherwise.
-Formally:
+\textbf{What it is.}
+A binary reward that returns 1.0 if the response contains a parseable answer in the expected \texttt{\#\#\#\# <number>} format, and 0.0 otherwise:
 \[
 R_A(\text{response}) =
 \begin{cases}
@@ -10,19 +10,12 @@ R_A(\text{response}) =
 0.0 & \text{otherwise}
 \end{cases}
 \]
+A score of 1.0 means the response contains an extractable numeric answer, regardless of whether it is correct.
 
-\paragraph{Rationale.}
-Analysis of the SFT baseline (15.39\% strict accuracy) reveals that approximately 11\% of responses fail to produce any parseable answer.
-These responses receive zero reward from the correctness function regardless of their reasoning quality, providing no learning signal.
-By rewarding format compliance independently, we decouple format learning from mathematical reasoning.
-This is particularly valuable early in training when most or all 16 sampled responses per problem may be incorrect: the format reward still provides non-zero advantage variance, enabling gradient updates even when correctness-based reward is uniformly zero.
+\textbf{Why we chose it.}
+To address the 60.2\% extraction failure rate identified in Section~1.2: responses without a parseable answer receive zero correctness reward, blocking all gradient signal.
+Format compliance decouples format learning from reasoning, providing non-zero advantage variance even when all 16 samples are incorrect.
 
-\paragraph{Literature.}
-Format compliance rewards are standard practice in RLVR implementations for GSM8K.
-The GSM8K-RLVR benchmark, veRL framework, and Unsloth RL documentation all include format-checking as a reward component.
-The motivation is consistent across these works: ensuring the model learns to produce extractable answers is a prerequisite for the correctness signal to be effective.
-
-\paragraph{Alternatives considered.}
-We considered a calculator usage reward (rewarding invocation of calculator tools) and a reasoning structure reward (rewarding chain-of-thought formatting).
-Calculator usage was rejected because it risks incentivizing meaningless tool calls that do not contribute to problem solving.
-Reasoning structure was rejected because it is susceptible to reward hacking via padding attacks, where the model inflates response length without improving reasoning quality (Gao et al., 2024).
+Format compliance rewards are standard in RLVR implementations for GSM8K~\cite{gsm8k_rlvr, verl, unsloth}.
+We considered a calculator usage reward (rejected---risks incentivizing meaningless tool calls) and a reasoning structure reward (rejected---models learn to repeat correct but unnecessary reasoning steps to inflate structure scores~\cite{gao2024reward}).
+\nestunindent
