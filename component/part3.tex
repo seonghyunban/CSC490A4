@@ -84,23 +84,33 @@ Our RL run & \texttt{a4p3-rl-baseline@466} & Strict = 17.89\%, Relaxed = 18.04\%
     \label{fig:p3_karpathy_eval8}
 \end{figure}
 
+
 \subsection{Error Analysis}
+At the full-dataset level, the evaluation reports a strict exact rate of \textbf{17.89\%}, a relaxed numeric match rate of \textbf{18.04\%}, and a parseable rate of \textbf{82.94\%}. From these values, we derive four mutually exclusive categories. First, \textbf{strictly correct} outputs account for \textbf{17.89\%} of the dataset. Second, \textbf{relaxed-only correct} outputs account for only \textbf{0.15\%}, computed as the difference between relaxed and strict accuracy. Third, \textbf{extraction failures} account for \textbf{17.06\%}, corresponding to outputs for which the evaluator could not recover a valid strict final answer. Finally, the largest category is \textbf{parseable but incorrect} outputs, which account for \textbf{65.05\%} of the dataset.
 
-To better understand the behavior of the RL-trained model, we examined both the final full-set evaluation results and the online pass@k curves observed during training. Rather than treating all incorrect outputs as a single failure type, we grouped model responses into a small set of qualitative categories that reflect different underlying weaknesses.
+This quantitative breakdown suggests that the main limitation of the Part 3 RL baseline is not widespread failure to produce any parseable answer. In fact, the model remains parseable on most problems. Instead, the dominant failure mode is that the model often produces an answer in the expected format, but the answer is still wrong. This means that the bottleneck is not purely output formatting; reasoning quality and final-step reliability remain the main challenges.
 
-First, some responses were \textbf{fully correct}, meaning that the model followed a coherent solution path and produced the correct final extracted answer. These examples show that the RL objective is capable of reinforcing useful task behavior. However, the final offline accuracy remains modest, indicating that such success is still relatively limited overall.
+We also inspected the debug sample included in the evaluation output to obtain a more qualitative view of these incorrect but parseable responses. Within this subset, several recurring patterns appear. Some outputs follow a plausible reasoning path but make an arithmetic or bookkeeping error near the end. Others identify relevant quantities but fail to complete the derivation successfully. A smaller number appear truncated, malformed, or clearly off-task. These observations suggest that the broad ``parseable but incorrect'' category can be further decomposed into finer reasoning failures, but that decomposition currently relies on manual inspection rather than a fully automated classifier.
 
-Second, a noticeable class of failures consists of \textbf{mostly correct reasoning with an incorrect final answer}. In these cases, the model often appears to understand the setup of the problem and follows a plausible chain of reasoning, but makes an arithmetic, bookkeeping, or transcription mistake near the end. This type of error is especially important because it suggests that some failures are not caused by total misunderstanding, but by instability in the final stages of generation.
+Overall, the error analysis supports two conclusions. First, correctness-only RL does produce meaningful learning signal: the model reaches nontrivial accuracy and maintains a high parseability rate. Second, most remaining failures come from incorrect reasoning despite producing a parseable answer, rather than from total formatting collapse. This helps motivate Part 4, where improved reward design should aim not only to increase correctness, but also to reduce these dominant reasoning-level failures and improve single-sample reliability.
 
-Third, there are \textbf{partial reasoning failures}, where the model identifies relevant quantities or the right general approach but does not complete the derivation successfully. These responses are neither fully random nor fully correct; instead, they indicate incomplete problem solving. This category is consistent with a model that has acquired some problem-specific structure but still lacks reliable end-to-end execution.
+\begin{table}[h]
+\centering
+\caption{Quantitative error breakdown for \texttt{a4p3-rl-baseline@466} on GSM8K.}
+\label{tab:p3_error_breakdown}
+\begin{tabular}{l r}
+\hline
+\textbf{Category} & \textbf{Proportion} \\
+\hline
+Strictly correct & 17.89\% \\
+Relaxed-only correct & 0.15\% \\
+Extraction failure & 17.06\% \\
+Parseable but incorrect & 65.05\% \\
+\hline
+\end{tabular}
+\end{table}
 
-Fourth, some failures are best described as \textbf{format or extraction failures}. Since GSM8K correctness in this pipeline depends on extracting a final answer in the expected form, responses that omit or corrupt the final answer marker can be scored as incorrect even if parts of the reasoning are sensible. This matters because some apparent performance gain under RL may come from better alignment with the evaluator's expected answer format rather than from a large improvement in underlying mathematical reasoning alone.
-
-Finally, there are \textbf{degenerate or irrelevant outputs}, including drifting, repetitive, or off-task responses. These failures are less frequent than ordinary reasoning mistakes, but they remain important because they reflect the instability of correctness-only RL without additional regularization or structure.
-
-The online pass@k curves provide additional evidence for this interpretation. During training, all pass@k metrics initially dropped sharply around the early-middle stage of training and then partially recovered. By the end of training, higher-k metrics such as pass@6, pass@7, and pass@8 remained substantially above pass@1, while pass@1 itself recovered only modestly. This pattern suggests that the model often succeeds only under repeated sampling rather than through reliable single-sample reasoning. In other words, RL appears to improve the probability of producing a correct answer somewhere in the sample set, but not yet enough to make the model consistently correct on the first try.
-
-Taken together, these patterns suggest that the main weakness of the Part 3 baseline is not simply the absence of any useful learning signal. The model clearly does learn something under correctness-only RL, as shown by nontrivial reward values and recovering pass@k trends. However, its gains are still limited by a combination of final-step arithmetic errors, incomplete reasoning, format sensitivity, and sample-to-sample instability. 
+Table~\ref{tab:p3_error_breakdown} summarizes the evaluator-defined error categories derived directly from the saved GSM8K evaluation output.
 
 \subsection{Discussion}
 
