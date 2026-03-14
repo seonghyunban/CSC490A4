@@ -6,4 +6,7 @@ Our mistake taxonomy classifies errors by surface-level symptoms, so it may labe
 
 Compute constraints also prevented us from running + D+E and + C+E configurations, so we cannot empirically confirm D$\leftrightarrow$E complementarity or the C$\to$E prerequisite independently of D.
 
+All post-training evaluation uses temperature=1.0 sampling, so Part~4's accuracy numbers are not directly comparable to Part~2/3's greedy evaluation.
+A separate greedy eval per checkpoint would have enabled cross-part comparison at marginal additional compute cost.
+
 We worked within these constraints: multiple seeds across 10 configurations exceeded our compute budget, KL regularization would require modifying nanochat's training loop to maintain a reference model, which is outside the scope of this assignment---we design rewards, not modify the RL algorithm---and the ablation's purpose was to isolate whether each reward helps rather than to optimize weights or build a fine-grained error ontology.

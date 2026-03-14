@@ -19,6 +19,12 @@ All runs use identical hyperparameters, held constant to isolate the effect of r
     \item Advantage computation: mean subtraction (not $z$-score normalization)
 \end{itemize}
 
+\textbf{Post-training evaluation.}
+All runs are evaluated with temperature=1.0 and 8 samples per problem.
+Pass@k requires stochastic sampling---greedy decoding produces identical outputs $k$ times, making Pass@k meaningless.
+Using a single evaluation pipeline ensures all metrics (Pass@1, Pass@8, gap, extraction failure rate, error taxonomy) are internally comparable across all 10 configurations.
+Because Part~2 and Part~3 evaluate under greedy decoding, accuracy numbers are not directly comparable across parts.
+
 \textbf{Infrastructure.}
 Training runs use 8$\times$H100 GPUs on Modal with \texttt{torchrun} for DDP.
 Post-training evaluation is sharded across 8 containers, each evaluating a subset of the 1319 GSM8K test problems.

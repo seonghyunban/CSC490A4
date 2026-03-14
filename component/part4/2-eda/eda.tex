@@ -1,7 +1,7 @@
 \subsection{Exploratory Data Analysis}
 \nestindent
 
-We conduct exploratory analysis on two baselines to identify failure modes that binary correctness reward cannot address.
+We conduct exploratory analysis on two baselines using temperature=1.0 sampling---the same setting used during RL training---to observe the model's full output distribution, not just its greedy best path. This reveals failure modes that binary correctness reward may have not been sufficient.
 
 \subsubsection{Baselines}
 \nestindent
@@ -48,8 +48,11 @@ The majority of responses are unusable: 60.3\% lack a parseable answer (blocking
 The wide Pass@8--Pass@1 gap (15.2\%) indicates the model can solve many problems but not reliably, suggesting that reward signals which stabilize output quality could improve accuracy without requiring new reasoning capability.
 The answer magnitude range (median 42, max 2.88M) means any proximity-based reward must normalize for scale.
 
-RL evaluation uses temperature=1.0 (required for REINFORCE), unlike Part~2's greedy evaluation, so the two accuracy numbers are not directly comparable.
-The parseability drop from 88.93\% to 39.7\% likely reflects both stochastic sampling and the absence of KL regularization.
+RL evaluation uses temperature=1.0 (required for REINFORCE), unlike Part~2 and Part~3's greedy evaluation, so accuracy numbers are not directly comparable across parts.
+Greedy evaluation of this same checkpoint (Part~3) shows 82.94\% parseable---the model has acquired formatting skill during RL.
+But under temperature=1.0 sampling, only 39.7\% of responses are parseable: the skill is fragile, concentrated along the highest-probability path.
+During training, the 60.3\% unparseable samples receive zero correctness reward and produce no gradient, so the optimizer cannot reinforce what the model already knows how to do.
+This motivates a format reward that provides signal to unparseable outputs, converting fragile formatting knowledge into a robust skill.
 
 \textbf{Failure mode distribution.}
 We classify each of the baseline's 990 failed problems into six categories using a rule-based taxonomy (Table~\ref{tab:taxonomy}).
